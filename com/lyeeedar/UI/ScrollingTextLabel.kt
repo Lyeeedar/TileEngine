@@ -19,31 +19,48 @@ class ScrollingTextLabel(text: String, val skin: Skin, style: String = "default"
 		textAccumulator = 0f
 	}
 
+	private val maxTextIndex: Int
+		get() {
+			var accumulator = 0
+			for (l in 0 until bitmapFontCache.layouts.size)
+			{
+				val layout = bitmapFontCache.layouts[l]
+				for (r in 0 until layout.runs.size)
+				{
+					val run = layout.runs[r]
+					accumulator += run.glyphs.size
+				}
+			}
+
+			return accumulator
+		}
+
 	private var currentTextIndex: Int = 0
 	private var textAccumulator: Float = 0f
 
 	var isComplete: Boolean
-		get() = currentTextIndex == text.count()
+		get() = currentTextIndex == maxTextIndex
 		set(value)
 		{
 			if (value)
 			{
-				currentTextIndex = text.count()
+				currentTextIndex = maxTextIndex
 			}
 		}
 
 	override fun act(delta: Float)
 	{
-		if (currentTextIndex != text.count())
+		val maxIndex = maxTextIndex
+		if (currentTextIndex != maxIndex)
 		{
 			textAccumulator += delta
 			while (textAccumulator > 0.02f)
 			{
 				textAccumulator -= 0.02f
 				currentTextIndex++
-				if (currentTextIndex > text.count())
+				if (currentTextIndex > maxIndex)
 				{
-					currentTextIndex = text.count()
+					currentTextIndex = maxIndex
 					break
 				}
 			}
