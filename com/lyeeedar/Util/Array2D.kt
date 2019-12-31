@@ -2,7 +2,6 @@ package com.lyeeedar.Util
 
 import com.badlogic.gdx.math.MathUtils.clamp
 import com.lyeeedar.Direction
-import kotlin.coroutines.experimental.buildSequence
 
 /**
  * Created by Philip on 08-Apr-16.
@@ -87,7 +86,7 @@ class Array2D<T> (val xSize: Int, val ySize: Int, val array: Array<Array<T>>): S
 
 	fun get(p: Point, range: Int): Sequence<T>
 	{
-		return buildSequence {
+		return sequence {
 			val minx = max(p.x - range, 0)
 			val miny = max(p.y - range, 0)
 			val maxx = min(p.x + range, width-1)

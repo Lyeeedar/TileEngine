@@ -9,7 +9,6 @@ import com.badlogic.gdx.utils.XmlReader
 import com.esotericsoftware.kryo.io.Input
 import com.esotericsoftware.kryo.io.Output
 import ktx.collections.set
-import kotlin.coroutines.experimental.buildSequence
 
 class XmlData
 {
@@ -55,7 +54,7 @@ class XmlData
 	fun getChildrenByName(name: String): Sequence<XmlData>
 	{
 		val id = name.toUpperCase().hashCode()
-		return buildSequence {
+		return sequence {
 			for (child in children)
 			{
 				if (child.nameId == id)
@@ -457,7 +456,7 @@ class XmlData
 				}
 			}
 
-			return buildSequence {
+			return sequence {
 				for (path in existingPaths!!)
 				{
 					yield(path)
@@ -478,7 +477,7 @@ class XmlData
 				}
 			}
 
-			return buildSequence {
+			return sequence {
 				for (path in existingPaths!!)
 				{
 					if (path.startsWith(base, true))

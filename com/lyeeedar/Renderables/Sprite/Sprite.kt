@@ -8,7 +8,8 @@ import com.badlogic.gdx.utils.Array
 import com.lyeeedar.Renderables.Animation.AbstractColourAnimation
 import com.lyeeedar.Renderables.Renderable
 import com.lyeeedar.Renderables.SortedRenderer
-import com.lyeeedar.Util.*
+import com.lyeeedar.Util.Colour
+import com.lyeeedar.Util.Random
 
 class Sprite(val fileName: String, var animationDelay: Float, var textures: Array<TextureRegion>, colour: Colour, var drawActualSize: Boolean) : Renderable()
 {
@@ -216,11 +217,11 @@ class Sprite(val fileName: String, var animationDelay: Float, var textures: Arra
 				col.clamp()
 			}
 
-			batch.setColor(col.toFloatBits())
+			batch.packedColor = col.toFloatBits()
 
 			drawTexture(batch, texIndex, x, y, width, height, scaleX, scaleY, rotation)
 
-			batch.setColor(oldCol.toFloatBits())
+			batch.packedColor = oldCol.toFloatBits()
 		}
 	}
 

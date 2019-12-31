@@ -5,7 +5,6 @@ import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.StringBuilder
 import com.badlogic.gdx.utils.XmlReader
-import kotlin.coroutines.experimental.buildSequence
 
 fun getXml(path: String, extension: String = "xml"): XmlData
 {
@@ -68,7 +67,7 @@ fun XmlReader.Element.ranChild() = this.getChild(Random.random(this.childCount-1
 fun XmlReader.Element.children(): Sequence<XmlReader.Element>
 {
 	val el = this
-	return buildSequence {
+	return sequence {
 		for (i in 0 until el.childCount)
 		{
 			yield(el.getChild(i))

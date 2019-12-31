@@ -4,11 +4,7 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.ObjectFloatMap
 import com.badlogic.gdx.utils.ObjectMap
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.launch
 import squidpony.squidmath.LightRNG
-import kotlin.coroutines.experimental.buildSequence
 
 fun <T> kotlin.Array<T>.random(ran: LightRNG = Random.random): T = this[ran.nextInt(this.size)]
 fun <T> List<T>.Array(ran: LightRNG = Random.random): T? = if (this.isEmpty()) null else this[ran.nextInt(this.size)]
@@ -44,7 +40,7 @@ fun <T> Sequence<T>.asGdxArray(ordered: Boolean = true): com.badlogic.gdx.utils.
 fun <T> com.badlogic.gdx.utils.Array<T>.randomize(): Sequence<T>
 {
 	val sequence = this.asGdxArray(false)
-	return buildSequence {
+	return sequence {
 		while (sequence.size > 0)
 		{
 			yield(sequence.removeRandom(Random.random))
@@ -55,7 +51,7 @@ fun <T> com.badlogic.gdx.utils.Array<T>.randomize(): Sequence<T>
 fun <T> Sequence<T>.randomize(): Sequence<T>
 {
 	val sequence = this.asGdxArray(false)
-	return buildSequence {
+	return sequence {
 		while (sequence.size > 0)
 		{
 			yield(sequence.removeRandom(Random.random))
@@ -145,20 +141,6 @@ fun <T> Sequence<T>.sequenceEquals(other: Sequence<T>): Boolean
 	}
 
 	return true
-}
-
-suspend fun <T> Iterable<T>.parallelForEach(func: (T) -> Unit)
-{
-	val jobs = Array<Job>(count())
-	for (item in this)
-	{
-		val job = launch(CommonPool)
-		{
-			func(item)
-		}
-		jobs.add(job)
-	}
-	for (job in jobs) job.join()
 }
 
 operator fun <K> ObjectFloatMap<K>.set(key: K, value: Float)

@@ -201,7 +201,7 @@ class ParticleEffectActor(val effect: ParticleEffect, val removeOnCompletion: Bo
 					{
 						val texture1 = particle.textures[pdata.texStream][tex1.toInt()].second
 
-						batch.setColor(col.toFloatBits())
+						batch.packedColor = col.toFloatBits()
 						batch.draw(texture1, drawx, drawy, sizex*0.5f, sizey*0.5f, sizex, sizey, 1f, 1f, rotation)
 					}
 				}

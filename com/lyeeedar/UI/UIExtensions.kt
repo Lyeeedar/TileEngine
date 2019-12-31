@@ -17,7 +17,6 @@ import com.lyeeedar.Util.Colour
 import com.lyeeedar.Util.Future
 import com.lyeeedar.Util.Statics
 import ktx.actors.alpha
-import ktx.actors.plus
 import ktx.actors.then
 import ktx.scene2d.label
 import ktx.scene2d.table
@@ -63,14 +62,14 @@ fun showFullscreenText(text: String, minDuration: Float, exitAction: ()->Unit)
 
 		Future.call({
 			Statics.controls.onInput += fun(key): Boolean {
-				fadeTable + outsequence
+				fadeTable.addAction(outsequence)
 				exitAction.invoke()
 				return true
 			}
 		}, minDuration)
 	}
 
-	fadeTable + sequence
+	fadeTable.addAction(sequence)
 
 	Statics.stage.addActor(fadeTable)
 	fadeTable.setFillParent(true)
@@ -78,7 +77,7 @@ fun showFullscreenText(text: String, minDuration: Float, exitAction: ()->Unit)
 
 fun Batch.setColor(col: Colour)
 {
-	this.setColor(col.toFloatBits())
+	this.packedColor = col.toFloatBits()
 }
 
 fun Actor.tint(col: Color): Actor
