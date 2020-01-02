@@ -29,6 +29,9 @@ class Statics
 		var fps = 60
 		var android = false
 		val release = false
+		val debug: Boolean
+			get() = !release
+
 		lateinit var applicationChanger: AbstractApplicationChanger
 		var resolution = Point(360, 640)
 		var screenSize = Point(resolution.x, resolution.y)

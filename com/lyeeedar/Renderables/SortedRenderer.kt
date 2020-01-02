@@ -671,6 +671,11 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 	// ----------------------------------------------------------------------
 	private fun flush(batch: Batch)
 	{
+		if (queuedSprites == 0)
+		{
+			return
+		}
+
 		// Begin prerender work
 		executor.addJob {
 			// sort
