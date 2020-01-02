@@ -1,4 +1,4 @@
-package com.lyeeedar.Util
+package com.lyeeedar
 
 // ----------------------------------------------------------------------
 enum class SpaceSlot
