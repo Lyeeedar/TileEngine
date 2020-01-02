@@ -5,6 +5,7 @@ import com.lyeeedar.MapGeneration.MapGenerator
 import com.lyeeedar.MapGeneration.MapGeneratorNode
 import com.lyeeedar.MapGeneration.Pos
 import com.lyeeedar.MapGeneration.Symbol
+import com.lyeeedar.SpaceSlot
 import com.lyeeedar.Util.XmlData
 import ktx.collections.toGdxArray
 
@@ -12,7 +13,6 @@ class FilterAction(generator: MapGenerator) : AbstractMapGenerationAction(genera
 {
 	enum class Mode
 	{
-		TYPE,
 		NOCONTENT,
 		CHARACTER,
 		CORNER,
@@ -23,7 +23,6 @@ class FilterAction(generator: MapGenerator) : AbstractMapGenerationAction(genera
 	lateinit var mode: Mode
 
 	var char: Char = ' '
-	var type: Symbol.SymbolType = Symbol.SymbolType.FLOOR
 	var centerDist = 2
 
 	lateinit var nodeGuid: String
@@ -46,11 +45,10 @@ class FilterAction(generator: MapGenerator) : AbstractMapGenerationAction(genera
 
 		val condition: (symbol: Symbol, pos: Pos) -> Boolean = when (mode)
 		{
-			Mode.TYPE -> fun (symbol, pos) = symbol.type == type
 			Mode.NOCONTENT -> fun (symbol, pos) = symbol.content == null
 			Mode.CHARACTER -> fun (symbol, pos) = symbol.char == char
 			Mode.CORNER -> fun (symbol, pos): Boolean {
-				if (symbol.type != Symbol.SymbolType.FLOOR) return false // cant be a corner if this isnt a floor
+				if (!symbol.getPassable(SpaceSlot.ENTITY, null)) return false // cant be a corner if this isnt a floor
 
 				// corner if any 2 sequential cardinal sides are not floors
 				val dirs = Direction.CardinalValues.toGdxArray()
@@ -60,7 +58,7 @@ class FilterAction(generator: MapGenerator) : AbstractMapGenerationAction(genera
 				for (dir in dirs)
 				{
 					val symbol = newArea[newArea.x + pos.x + dir.x, newArea.y + pos.y + dir.y]
-					if (symbol == null || symbol.type != Symbol.SymbolType.FLOOR)
+					if (symbol == null || !symbol.getPassable(SpaceSlot.ENTITY, null))
 					{
 						if (isWall)
 						{
@@ -80,12 +78,12 @@ class FilterAction(generator: MapGenerator) : AbstractMapGenerationAction(genera
 				return false
 			}
 			Mode.EDGE -> fun (symbol, pos): Boolean {
-				if (symbol.type != Symbol.SymbolType.FLOOR) return false // cant be a edge if this isnt a floor
+				if (!symbol.getPassable(SpaceSlot.ENTITY, null)) return false // cant be a edge if this isnt a floor
 
 				for (dir in Direction.CardinalValues)
 				{
 					val symbol = newArea[newArea.x + pos.x + dir.x, newArea.y + pos.y + dir.y]
-					if (symbol == null || symbol.type != Symbol.SymbolType.FLOOR)
+					if (symbol == null || !symbol.getPassable(SpaceSlot.ENTITY, null))
 					{
 						return true
 					}
@@ -94,14 +92,14 @@ class FilterAction(generator: MapGenerator) : AbstractMapGenerationAction(genera
 				return false
 			}
 			Mode.CENTER -> fun (symbol, pos): Boolean {
-				if (symbol.type != Symbol.SymbolType.FLOOR) return false // cant be a center if this isnt a floor
+				if (!symbol.getPassable(SpaceSlot.ENTITY, null)) return false // cant be a center if this isnt a floor
 
 				for (dir in Direction.CardinalValues)
 				{
 					for (i in 1..centerDist)
 					{
 						val symbol = newArea[newArea.x + pos.x + dir.x * i, newArea.y + pos.y + dir.y * i]
-						if (symbol == null || symbol.type != Symbol.SymbolType.FLOOR)
+						if (symbol == null || !symbol.getPassable(SpaceSlot.ENTITY, null))
 						{
 							return false
 						}
@@ -141,7 +139,6 @@ class FilterAction(generator: MapGenerator) : AbstractMapGenerationAction(genera
 		mode = Mode.valueOf(xmlData.get("Mode", "Type")!!.toUpperCase())
 
 		char = xmlData.get("Character", " ")!![0]
-		type = Symbol.SymbolType.valueOf(xmlData.get("Type", "Floor")!!.toUpperCase())
 		centerDist = xmlData.getInt("CenterDist", 2)
 
 		nodeGuid = xmlData.get("Node", "")!!
