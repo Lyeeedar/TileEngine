@@ -18,7 +18,7 @@ class XmlLoadTester
 					when (xml.name.toUpperCase())
 					{
 						"EFFECT" -> ParticleEffect.load(path.split("Particles/")[1], ParticleEffectDescription(""))
-						else -> GameXmlLoadTester.testLoad(xml)
+						else -> GameXmlLoadTester.testLoad(xml, path)
 					}
 
 					System.out.println("Test loaded '$path'")
