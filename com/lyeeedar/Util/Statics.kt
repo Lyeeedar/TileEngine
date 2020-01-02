@@ -54,6 +54,9 @@ class Statics
 			val smallfont = AssetManager.loadFont("Sprites/Unpacked/font.ttf", 8, Color(0.97f, 0.87f, 0.7f, 1f), 1, Color.BLACK, false)
 			skin.add("small", smallfont)
 
+			val cardsmallfont = AssetManager.loadFont("Sprites/Unpacked/font.ttf", 8, Color(0.0f, 0.0f, 0.0f, 1f), 0, Color.BLACK, false)
+			skin.add("cardsmall", cardsmallfont)
+
 			val font = AssetManager.loadFont("Sprites/Unpacked/font.ttf", 12, Color(0.97f, 0.87f, 0.7f, 1f), 1, Color.BLACK, false)
 			skin.add("default", font)
 
@@ -124,6 +127,10 @@ class Statics
 			smallLabel.font = skin.getFont("small")
 			skin.add("small", smallLabel)
 
+			val cardsmallLabel = Label.LabelStyle()
+			cardsmallLabel.font = skin.getFont("cardsmall")
+			skin.add("cardsmall", cardsmallLabel)
+
 			val cardLabel = Label.LabelStyle()
 			cardLabel.font = skin.getFont("card")
 			skin.add("card", cardLabel)
@@ -143,6 +150,20 @@ class Statics
 			checkButton.fontColor = Color.LIGHT_GRAY
 			checkButton.overFontColor = Color.WHITE
 			skin.add("default", checkButton)
+
+			val pauseButton = Button.ButtonStyle()
+			pauseButton.up =
+				LayeredDrawable(
+					buttonBackground,
+					TextureRegionDrawable(AssetManager.loadTextureRegion("Sprites/Oryx/uf_split/uf_interface/uf_interface_643.png")))
+			skin.add("pause", pauseButton)
+
+			val playButton = Button.ButtonStyle()
+			playButton.up =
+				LayeredDrawable(
+					buttonBackground,
+					TextureRegionDrawable(AssetManager.loadTextureRegion("Sprites/Oryx/uf_split/uf_interface/uf_interface_682.png")))
+			skin.add("play", playButton)
 
 			val textButton = TextButton.TextButtonStyle()
 			textButton.up = buttonBackground

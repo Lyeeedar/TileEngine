@@ -2,6 +2,7 @@ package com.lyeeedar.Screens
 
 import com.badlogic.gdx.*
 import com.badlogic.gdx.graphics.GL20
+import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.input.GestureDetector
@@ -26,15 +27,15 @@ import ktx.actors.setKeyboardFocus
 
 abstract class AbstractScreen() : Screen, InputProcessor, GestureDetector.GestureListener
 {
-    //############################################################################
-    //region Abstract Methods
+	//############################################################################
+	//region Abstract Methods
 
-    abstract fun create()
-    abstract fun doRender(delta: Float)
+	abstract fun create()
+	abstract fun doRender(delta: Float)
 
-    //endregion
-    //############################################################################
-    //region Screen
+	//endregion
+	//############################################################################
+	//region Screen
 
 	// ----------------------------------------------------------------------
 	fun fadeOutTransition(time: Float)
@@ -58,41 +59,49 @@ abstract class AbstractScreen() : Screen, InputProcessor, GestureDetector.Gestur
 		Statics.game.switchScreen(this)
 	}
 
-    // ----------------------------------------------------------------------
-    override fun show()
+	// ----------------------------------------------------------------------
+	override fun show()
 	{
-        if ( !created )
+		if ( !created )
 		{
-            baseCreate()
-            created = true
-        }
+			baseCreate()
+			created = true
+		}
 
-        Gdx.input.inputProcessor = inputMultiplexer
+		Gdx.input.inputProcessor = inputMultiplexer
 
 		Save.save()
-    }
+	}
 
-    // ----------------------------------------------------------------------
-    override fun resize(width: Int, height: Int)
+	// ----------------------------------------------------------------------
+	override fun resize(width: Int, height: Int)
 	{
-        stage.viewport.update(width, height, true)
-    }
+		stage.viewport.update(width, height, true)
+	}
 
-    // ----------------------------------------------------------------------
-    override fun render(delta: Float)
+	open fun modifyDelta(delta: Float): Float
 	{
+		return delta
+	}
+
+	// ----------------------------------------------------------------------
+	override fun render(delta: Float)
+	{
+		val rawDelta = delta
+		val delta = modifyDelta(delta)
+
 		val start = System.nanoTime()
 
-        stage.act()
+		stage.act()
 		Future.update(delta)
 		Tutorial.current?.act(delta)
 
-        Gdx.gl.glClearColor(0f, 0f, 0f, 0f)
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
+		Gdx.gl.glClearColor(0f, 0f, 0f, 0f)
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
-        doRender(delta)
+		doRender(delta)
 
-        stage.draw()
+		stage.draw()
 
 		if (fadeAccumulator > 0f)
 		{
@@ -114,34 +123,44 @@ abstract class AbstractScreen() : Screen, InputProcessor, GestureDetector.Gestur
 
 		val diff = (end - start) / 1000000000f
 		frameDuration = (frameDuration + diff) / 2f
+		deltaAverage = (deltaAverage + rawDelta) / 2f
 
-		fpsAccumulator += delta
+		fpsAccumulator += rawDelta
 		if (fpsAccumulator > 0.5f)
 		{
 			fpsAccumulator = 0f
 
 			fps = (1f / frameDuration).toInt()
+			actualFps = (1.0f / deltaAverage).toInt()
 		}
 
-        // limit fps
-        sleep()
-    }
+		if (!Statics.release && drawFPS)
+		{
+			stage.batch.begin()
+			font.draw(stage.batch, "Frame FPS: $fps", Statics.resolution.x - 200f, Statics.resolution.y - 20f)
+			font.draw(stage.batch, "Actual FPS: $actualFps", Statics.resolution.x - 200f, Statics.resolution.y - 50f)
+			stage.batch.end()
+		}
 
-    // ----------------------------------------------------------------------
-    override fun pause() {}
+		// limit fps
+		sleep()
+	}
 
-    // ----------------------------------------------------------------------
-    override fun resume() {}
+	// ----------------------------------------------------------------------
+	override fun pause() {}
 
-    // ----------------------------------------------------------------------
-    override fun hide() {}
+	// ----------------------------------------------------------------------
+	override fun resume() {}
 
-    // ----------------------------------------------------------------------
-    override fun dispose() {}
+	// ----------------------------------------------------------------------
+	override fun hide() {}
 
-    //enregion
-    //############################################################################
-    //region InputProcessor
+	// ----------------------------------------------------------------------
+	override fun dispose() {}
+
+	//enregion
+	//############################################################################
+	//region InputProcessor
 
 	// ----------------------------------------------------------------------
 	override fun keyDown( keycode: Int ): Boolean
@@ -168,29 +187,29 @@ abstract class AbstractScreen() : Screen, InputProcessor, GestureDetector.Gestur
 		return false
 	}
 
-    // ----------------------------------------------------------------------
-    override fun keyUp( keycode: Int ) = false
+	// ----------------------------------------------------------------------
+	override fun keyUp( keycode: Int ) = false
 
-    // ----------------------------------------------------------------------
-    override fun keyTyped( character: Char ) = false
+	// ----------------------------------------------------------------------
+	override fun keyTyped( character: Char ) = false
 
-    // ----------------------------------------------------------------------
-    override fun touchDown( screenX: Int, screenY: Int, pointer: Int, button: Int ) = false
+	// ----------------------------------------------------------------------
+	override fun touchDown( screenX: Int, screenY: Int, pointer: Int, button: Int ) = false
 
-    // ----------------------------------------------------------------------
-    override fun touchUp( screenX: Int, screenY: Int, pointer: Int, button: Int ) = false
+	// ----------------------------------------------------------------------
+	override fun touchUp( screenX: Int, screenY: Int, pointer: Int, button: Int ) = false
 
-    // ----------------------------------------------------------------------
-    override fun touchDragged( screenX: Int, screenY: Int, pointer: Int ) = false
+	// ----------------------------------------------------------------------
+	override fun touchDragged( screenX: Int, screenY: Int, pointer: Int ) = false
 
-    // ----------------------------------------------------------------------
-    override fun mouseMoved( screenX: Int, screenY: Int ) = false
+	// ----------------------------------------------------------------------
+	override fun mouseMoved( screenX: Int, screenY: Int ) = false
 
 	// ----------------------------------------------------------------------
 	override fun touchDown(x: Float, y: Float, pointer: Int, button: Int): Boolean = false
 
 	// ----------------------------------------------------------------------
-    override fun scrolled(amount: Int) = false
+	override fun scrolled(amount: Int) = false
 
 	// ----------------------------------------------------------------------
 	override fun tap(x: Float, y: Float, count: Int, button: Int): Boolean = false
@@ -253,17 +272,19 @@ abstract class AbstractScreen() : Screen, InputProcessor, GestureDetector.Gestur
 	override fun pinchStop() { }
 
 	//endregion
-    //############################################################################
-    //region Methods
+	//############################################################################
+	//region Methods
 
-    // ----------------------------------------------------------------------
-    fun baseCreate()
+	// ----------------------------------------------------------------------
+	fun baseCreate()
 	{
-        stage = Stage(ScalingViewport(Scaling.fit, Statics.resolution.x.toFloat(), Statics.resolution.y.toFloat()), SpriteBatch())
+		font = Statics.skin.getFont("default")
 
-        mainTable = Table()
-        mainTable.setFillParent(true)
-        stage.addActor(mainTable)
+		stage = Stage(ScalingViewport(Scaling.fit, Statics.resolution.x.toFloat(), Statics.resolution.y.toFloat()), SpriteBatch(2000))
+
+		mainTable = Table()
+		mainTable.setFillParent(true)
+		stage.addActor(mainTable)
 
 		if (!Statics.release)
 		{
@@ -282,61 +303,56 @@ abstract class AbstractScreen() : Screen, InputProcessor, GestureDetector.Gestur
 			debugConsole.isVisible = false
 		}
 
-        inputMultiplexer = InputMultiplexer()
+		inputMultiplexer = InputMultiplexer()
 
 		val gestureProcess = GestureDetector(this)
-        val inputProcessorOne = this
-        val inputProcessorTwo = stage
+		val inputProcessorOne = this
+		val inputProcessorTwo = stage
 
-        inputMultiplexer.addProcessor(inputProcessorTwo)
+		inputMultiplexer.addProcessor(inputProcessorTwo)
 		inputMultiplexer.addProcessor(gestureProcess)
-        inputMultiplexer.addProcessor(inputProcessorOne)
+		inputMultiplexer.addProcessor(inputProcessorOne)
 
-        create()
-    }
+		create()
+	}
 
-    // ----------------------------------------------------------------------
-    fun sleep() {
+	// ----------------------------------------------------------------------
+	fun sleep() {
 		diff = System.currentTimeMillis() - start
-        if ( Statics.fps > 0 ) {
+		if ( Statics.fps > 0 ) {
 
-            val targetDelay = 1000 / Statics.fps
-            if ( diff < targetDelay ) {
-                try {
-                    Thread.sleep(targetDelay - diff)
-                } catch (e: InterruptedException) {
-                }
-            }
-        }
+			val targetDelay = 1000 / Statics.fps
+			if ( diff < targetDelay ) {
+				try {
+					Thread.sleep(targetDelay - diff)
+				} catch (e: InterruptedException) {
+				}
+			}
+		}
 		start = System.currentTimeMillis()
+	}
 
-		if (frametime == -1f)
-		{
-			frametime = 1f / diff
-		}
-		else
-		{
-			frametime = (frametime + 1f/diff) / 2f
-		}
-    }
+	//endregion
+	//############################################################################
+	//region Data
 
-    //endregion
-    //############################################################################
-    //region Data
+	var created: Boolean = false
 
-    var created: Boolean = false
+	lateinit var stage: Stage
+	lateinit var mainTable: Table
 
-    lateinit var stage: Stage
-    lateinit var mainTable: Table
+	lateinit var inputMultiplexer: InputMultiplexer
 
-    lateinit var inputMultiplexer: InputMultiplexer
-
-    var diff: Long = 0
-    var start: Long = System.currentTimeMillis()
-	var frametime: Float = -1f
+	var diff: Long = 0
+	var start: Long = System.currentTimeMillis()
 	var frameDuration: Float = 0f
+	var deltaAverage: Float = 0f
 	var fps: Int = 0
+	var actualFps: Int = 0
 	var fpsAccumulator: Float = 0f
+	var drawFPS = true
+
+	lateinit var font: BitmapFont
 
 	var debugAccumulator: Float = 0f
 
@@ -348,8 +364,8 @@ abstract class AbstractScreen() : Screen, InputProcessor, GestureDetector.Gestur
 	val debugConsoleTable = Table()
 	lateinit var debugConsole: DebugConsole
 
-    //endregion
-    //############################################################################
+	//endregion
+	//############################################################################
 }
 
 public enum class FadeType

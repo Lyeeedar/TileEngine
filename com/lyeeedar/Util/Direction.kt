@@ -81,6 +81,7 @@ enum class Direction private constructor(val x: Int, val y: Int, val identifier:
 		val CardinalValues = arrayOf(NORTH, EAST, SOUTH, WEST)
 		val DiagonalValues = arrayOf(NORTHEAST, NORTHWEST, SOUTHWEST, SOUTHWEST)
 		val Values = Direction.values()
+		val ValuesWithoutCenter = arrayOf(NORTH, EAST, SOUTH, WEST, NORTHEAST, NORTHWEST, SOUTHEAST, SOUTHWEST)
 
 		fun getDirection(point: Point): Direction
 		{
