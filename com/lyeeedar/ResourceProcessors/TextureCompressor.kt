@@ -10,7 +10,6 @@ import ktx.collections.set
 import ktx.collections.toGdxArray
 import java.io.File
 import java.security.MessageDigest
-import javax.xml.bind.DatatypeConverter
 
 
 class TextureCompressor
@@ -191,7 +190,7 @@ class TextureCompressor
 		val f = File(file)
 		val bytes = f.readBytes()
 		val bhash = MessageDigest.getInstance("MD5").digest(bytes)
-		val hash = DatatypeConverter.printHexBinary(bhash)
+		val hash = bhash.fold("", { str, it -> str + "%02x".format(it) })
 
 		val outputPath = "CompressedData/" + file.hashCode().toString() + ".png"
 
