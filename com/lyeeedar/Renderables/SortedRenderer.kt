@@ -43,8 +43,6 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 
 	private val startingArraySize = 128
 	private var spriteArray = Array<RenderSprite?>(startingArraySize) { null }
-	private var tempArray = Array<RenderSprite?>(startingArraySize) { null }
-	private lateinit var sortedArray: Array<RenderSprite?>
 	private var queuedSprites = 0
 
 	private val tilingMap: IntMap<ObjectSet<Long>> = IntMap()
@@ -261,6 +259,12 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 	// ----------------------------------------------------------------------
 	private fun requestRender(blendSrc: Int, blendDst: Int, texture: Texture, drawFun: (vertices: FloatArray, offset: Int) -> Unit)
 	{
+		if (currentVertexCount+verticesASprite >= maxVertices)
+		{
+			System.err.println("Too many vertices queued!")
+			return
+		}
+
 		if (currentBuffer == null)
 		{
 			currentBuffer = bufferPool.obtain()
@@ -282,8 +286,6 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 		val offset = currentVertexCount
 		buffer.count += verticesASprite
 		currentVertexCount += verticesASprite
-
-		if (currentVertexCount == maxVertices) throw Exception("Too many vertices queued!")
 
 		executor.addJob {
 			drawFun.invoke(vertices, offset)
@@ -583,7 +585,7 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 	{
 		for (i in 0 until queuedSprites)
 		{
-			val rs = sortedArray[i]!!
+			val rs = spriteArray[i]!!
 
 			var sprite = rs.sprite
 			if (rs.tilingSprite != null)
@@ -662,7 +664,6 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 		if (queuedSprites < spriteArray.size / 4)
 		{
 			spriteArray = kotlin.Array(spriteArray.size / 4, { null })
-			tempArray = kotlin.Array(spriteArray.size / 4, { null })
 		}
 
 		queuedSprites = 0
@@ -679,7 +680,7 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 		// Begin prerender work
 		executor.addJob {
 			// sort
-			sortedArray = RadixSort.sort(spriteArray, queuedSprites, tempArray)
+			spriteArray.sortWith(compareBy{ it?.comparisonVal ?: 0 }, 0, queuedSprites)
 
 			// do screen shake
 			if ( screenShakeRadius > 2 )
@@ -771,7 +772,6 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 		if (queuedSprites == spriteArray.size-1)
 		{
 			spriteArray = spriteArray.copyOf(spriteArray.size * 2)
-			tempArray = kotlin.Array(spriteArray.size * 2, { null })
 		}
 
 		spriteArray[queuedSprites] = renderSprite
@@ -1986,134 +1986,6 @@ class RenderSpriteBlock
 			{
 				return RenderSpriteBlock()
 			}
-		}
-	}
-}// ----------------------------------------------------------------------
-class RadixSort
-{
-	companion object
-	{
-		val Z = IntArray(1024)
-		fun sort(A: Array<RenderSprite?>, N: Int, Temp: Array<RenderSprite?>): Array<RenderSprite?>
-		{
-			Z.fill(0)
-			var A = A
-			var Temp = Temp
-
-			val Jump: Int
-			val Jump2: Int
-			val Jump3: Int
-			val Jump4: Int
-			var i: Int
-			var swp: Array<RenderSprite?>
-
-			// Sort-circuit set-up
-			Jump = A[0]!!.comparisonVal and 255
-			Z[Jump] = 1
-			Jump2 = (A[0]!!.comparisonVal shr 8 and 255) + 256
-			Z[Jump2] = 1
-			Jump3 = (A[0]!!.comparisonVal shr 16 and 255) + 512
-			Z[Jump3] = 1
-			Jump4 = (A[0]!!.comparisonVal shr 24 and 255) + 768
-			Z[Jump4] = 1
-
-			// Histograms creation
-			i = 1
-			while (i < N)
-			{
-				++Z[A[i]!!.comparisonVal and 255]
-				++Z[(A[i]!!.comparisonVal shr 8 and 255) + 256]
-				++Z[(A[i]!!.comparisonVal shr 16 and 255) + 512]
-				++Z[(A[i]!!.comparisonVal shr 24 and 255) + 768]
-				++i
-			}
-
-			// 1st LSB byte sort
-			if (Z[Jump] != N)
-			{
-				i = 1
-				while (i < 256)
-				{
-					Z[i] = Z[i - 1] + Z[i]
-					++i
-				}
-				i = N - 1
-				while (i >= 0)
-				{
-					Temp[--Z[A[i]!!.comparisonVal and 255]] = A[i]
-					--i
-				}
-				swp = A
-				A = Temp
-				Temp = swp
-			}
-
-			// 2nd LSB byte sort
-			if (Z[Jump2] != N)
-			{
-				i = 257
-				while (i < 512)
-				{
-					Z[i] = Z[i - 1] + Z[i]
-					++i
-				}
-				i = N - 1
-				while (i >= 0)
-				{
-					Temp[--Z[(A[i]!!.comparisonVal shr 8 and 255) + 256]] = A[i]
-					--i
-				}
-				swp = A
-				A = Temp
-				Temp = swp
-			}
-
-			// 3rd LSB byte sort
-			if (Z[Jump3] != N)
-			{
-				i = 513
-				while (i < 768)
-				{
-					Z[i] = Z[i - 1] + Z[i]
-					++i
-				}
-				i = N - 1
-				while (i >= 0)
-				{
-					Temp[--Z[(A[i]!!.comparisonVal shr 16 and 255) + 512]] = A[i]
-					--i
-				}
-				swp = A
-				A = Temp
-				Temp = swp
-			}
-
-			// 4th LSB byte sort and negative numbers sort
-			if (Z[Jump4] != N)
-			{
-				i = 897
-				while (i < 1024)
-				// -ve values frequency starts after index 895, i.e at 896 ( 896 = 768 + 128 ), goes upto 1023
-				{
-					Z[i] = Z[i - 1] + Z[i]
-					++i
-				}
-				Z[768] = Z[768] + Z[1023]
-				i = 769
-				while (i < 896)
-				{
-					Z[i] = Z[i - 1] + Z[i]
-					++i
-				}
-				i = N - 1
-				while (i >= 0)
-				{
-					Temp[--Z[(A[i]!!.comparisonVal shr 24 and 255) + 768]] = A[i]
-					--i
-				}
-				return Temp
-			}
-			return A
 		}
 	}
 }
