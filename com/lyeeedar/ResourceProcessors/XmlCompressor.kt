@@ -77,7 +77,7 @@ class XmlCompressor
 	{
 		System.out.println("path: " + path)
 		System.out.println("root:" + rootPath)
-		val relativePath = path.replace(rootPath + File.pathSeparator, "").replace(File.pathSeparator, "/")
+		val relativePath = path.replace("\\", "/").replace("$rootPath/", "")
 		System.out.println("relative: " + relativePath)
 
 		val rawxml = getRawXml("../assetsraw/$relativePath")
