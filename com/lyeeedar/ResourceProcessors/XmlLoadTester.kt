@@ -35,7 +35,7 @@ class XmlLoadTester
 						else -> GameXmlLoadTester.testLoad(xml, path)
 					}
 
-					System.out.println("Completed test load '$path'")
+					System.out.println("Success")
 				}
 				catch (ex: Exception)
 				{
