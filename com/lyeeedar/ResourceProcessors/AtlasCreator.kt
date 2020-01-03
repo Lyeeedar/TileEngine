@@ -30,6 +30,17 @@ class AtlasCreator
 
 	init
 	{
+		println("")
+		println("")
+		println("-------------------------------------------------------------------------")
+		println("")
+		println("#####      Atlas Creator      #######")
+		println("")
+		println("-------------------------------------------------------------------------")
+		println("Running in directory: " + File("").absolutePath)
+		println("")
+		println("")
+
 		buildTilingMasksArray()
 		findFilesRecursive(File("../assetsraw").absoluteFile)
 		parseCodeFilesRecursive(File("../../core/src").absoluteFile)

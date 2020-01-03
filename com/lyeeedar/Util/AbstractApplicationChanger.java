@@ -32,8 +32,6 @@ public abstract class AbstractApplicationChanger
 		Gdx.app = createApplication( Statics.game, prefs );
 	}
 
-	public abstract void processResources();
-
 	public abstract void setDefaultPrefs( Preferences prefs );
 
 	public abstract Application createApplication( MainGame game, Preferences pref );

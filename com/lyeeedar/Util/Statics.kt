@@ -25,7 +25,7 @@ class Statics
 	{
 		val PARTICLE_EDITOR = false
 
-		lateinit var skin: Skin
+		val skin: Skin by lazy { loadSkin() }
 		var fps = 60
 		var android = false
 		val release = false
@@ -349,7 +349,6 @@ class Statics
 
 		fun setup()
 		{
-			skin = loadSkin()
 			controls = Controls()
 
 			Colors.put("IMPORTANT", Color(0.6f, 1f, 0.9f, 1f))

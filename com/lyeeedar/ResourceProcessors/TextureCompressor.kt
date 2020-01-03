@@ -21,6 +21,17 @@ class TextureCompressor
 
 	init
 	{
+		println("")
+		println("")
+		println("-------------------------------------------------------------------------")
+		println("")
+		println("#####      Texture Compressor      #######")
+		println("")
+		println("-------------------------------------------------------------------------")
+		println("Running in directory: " + File("").absolutePath)
+		println("")
+		println("")
+
 		val cacheFilePath = File("../assetsraw/textureCompressionCache")
 		if (cacheFilePath.exists())
 		{

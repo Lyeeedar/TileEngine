@@ -13,6 +13,17 @@ class XmlCompressor
 
 	init
 	{
+		println("")
+		println("")
+		println("-------------------------------------------------------------------------")
+		println("")
+		println("#####      Xml Compressor      #######")
+		println("")
+		println("-------------------------------------------------------------------------")
+		println("Running in directory: " + File("").absolutePath)
+		println("")
+		println("")
+
 		rootPath = File("../assetsraw").absolutePath
 
 		// clear out existing data
