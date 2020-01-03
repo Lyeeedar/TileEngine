@@ -2,7 +2,6 @@ package com.lyeeedar.Components
 
 import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.utils.ObjectMap
-import com.lyeeedar.Global
 import com.lyeeedar.Renderables.Renderable
 import com.lyeeedar.Util.directory
 import com.lyeeedar.Util.getXml
@@ -13,11 +12,11 @@ class EntityLoader()
 	{
 		val sharedRenderableMap = ObjectMap<Int, Renderable>()
 
-		@JvmStatic fun load(path: String): Entity
+		@JvmStatic fun load(path: String, skipRenderables: Boolean): Entity
 		{
 			val xml = getXml(path)
 
-			val entity = if (xml.get("Extends", null) != null) load(xml.get("Extends")) else EntityPool.obtain()
+			val entity = if (xml.get("Extends", null) != null) load(xml.get("Extends"), skipRenderables) else EntityPool.obtain()
 
 			entity.add(LoadDataComponent.obtain().set(path, xml, true))
 
@@ -25,7 +24,7 @@ class EntityLoader()
 
 			for (componentEl in componentsEl.children())
 			{
-				if (Global.resolveInstant)
+				if (skipRenderables)
 				{
 					if (
 						componentEl.name.toUpperCase() == "ADDITIONALRENDERABLES" ||
