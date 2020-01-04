@@ -17,19 +17,19 @@ class OryxExtractor
 		println("Running in directory: " + File("").absolutePath)
 		println("")
 		println("")
-		
+
 		val expectedOryxDir = File("../assetsraw/Sprites/Oryx/uf_split")
 		if (!expectedOryxDir.exists())
 		{
-			unzip(File("../assetsraw/Sprites/Oryx/uf_split.zip").absolutePath, File("../assetsraw/Sprites/Oryx").absolutePath)
+			unzip(File("../../../PrivateStuff/uf_split.zip").absolutePath, File("../assetsraw/Sprites/Oryx").absolutePath)
 		}
 		else
 		{
 			println("Oryx already extracted, nothing to do")
 		}
 	}
-	
-	private fun unzip(zipFilePath:String, destDir:String) 
+
+	private fun unzip(zipFilePath:String, destDir:String)
 	{
 		ZipFile(zipFilePath).use { zip ->
 			zip.entries().asSequence().forEach { entry ->
