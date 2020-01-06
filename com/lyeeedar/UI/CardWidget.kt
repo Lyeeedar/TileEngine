@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Touchable
+import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.actions.Actions.*
 import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
@@ -19,6 +20,7 @@ import com.lyeeedar.Util.*
 import ktx.actors.alpha
 import ktx.actors.then
 import ktx.collections.gdxArrayOf
+import ktx.collections.toGdxArray
 
 data class Pick(val string: String, var pickFun: (card: CardWidget) -> Unit)
 
@@ -622,6 +624,183 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 					}
 
 					widget.addAction(sequence)
+				}
+			}
+		}
+
+		enum class LootAnimation
+		{
+			CHEST,
+			COIN_GOLD,
+			COIN_SILVER,
+			COIN_BRONZE
+		}
+		fun displayLoot(cards: Array<CardWidget>, animation: LootAnimation, onCompleteAction: ()->Unit)
+		{
+			if (cards.size == 0)
+			{
+				throw RuntimeException("Cannot show loot with 0 cards!")
+			}
+
+			val greyoutTable = createGreyoutTable(Statics.stage)
+
+			val cardsTable = Table()
+			greyoutTable.add(cardsTable).grow()
+			greyoutTable.row()
+
+			val buttonTable = Table()
+			greyoutTable.add(buttonTable).growX()
+
+			val dissolveDur = 1f
+
+			var gatheredLoot = 0
+			for (card in cards)
+			{
+				val oldPickFuns = card.pickFuns.toGdxArray()
+				card.pickFuns.clear()
+
+				for (oldPick in oldPickFuns)
+				{
+					card.addPick(oldPick.string) {
+						card.dissolve(CardWidget.DissolveType.HOLY, dissolveDur, 6f)
+
+						card.isPicked = true
+						oldPick.pickFun(card)
+
+						gatheredLoot++
+						if (gatheredLoot == cards.size)
+						{
+							Future.call(
+								{
+									greyoutTable.fadeOutAndRemove(0.6f)
+									onCompleteAction()
+								}, dissolveDur)
+
+						}
+					}
+				}
+			}
+
+			when (animation)
+			{
+				LootAnimation.CHEST ->
+				{
+					val chestClosed = SpriteWidget(AssetManager.loadSprite("Oryx/uf_split/uf_items/chest_gold"), 128f, 128f)
+					val chestOpen = SpriteWidget(AssetManager.loadSprite("Oryx/uf_split/uf_items/chest_gold_open"), 128f, 128f)
+
+					val wobbleDuration = 1f
+					chestClosed.setPosition(Statics.stage.width / 2f - 64f, Statics.stage.height / 2f - 64f)
+					chestClosed.setSize(128f, 128f)
+					chestClosed.addAction(WobbleAction(0f, 35f, 0.1f, wobbleDuration))
+					Statics.stage.addActor(chestClosed)
+
+					Future.call(
+						{
+							chestClosed.remove()
+
+							chestOpen.setPosition(Statics.stage.width / 2f - 64f, Statics.stage.height / 2f - 64f)
+							chestOpen.setSize(128f, 128f)
+							Statics.stage.addActor(chestOpen)
+
+							val effect = AssetManager.loadParticleEffect("ChestOpen").getParticleEffect()
+							val particleActor = ParticleEffectActor(effect, true)
+							particleActor.setSize(128f, 128f)
+							particleActor.setPosition(Statics.stage.width / 2f - 64f, Statics.stage.height / 2f - 64f)
+							Statics.stage.addActor(particleActor)
+
+							Future.call(
+								{
+									val sequence = Actions.delay(0.2f) then Actions.fadeOut(0.3f) then Actions.removeActor()
+									chestOpen.addAction(sequence)
+
+									for (card in cards)
+									{
+										Statics.stage.addActor(card)
+									}
+
+									layoutCards(cards, Direction.CENTER, cardsTable, startScale = 0.3f, flip = true)
+								}, 0.4f)
+						}, wobbleDuration)
+				}
+
+				LootAnimation.COIN_GOLD, LootAnimation.COIN_BRONZE, LootAnimation.COIN_SILVER ->
+				{
+					val coin = SpriteWidget(AssetManager.loadSprite("Oryx/Custom/items/coin_grey"), 128f, 128f)
+					coin.color = when (animation) {
+						LootAnimation.COIN_GOLD -> Color.GOLD
+						LootAnimation.COIN_SILVER -> Color.WHITE
+						LootAnimation.COIN_BRONZE -> Color.ORANGE
+						else -> throw RuntimeException("Eh?")
+					}
+					val crack1 = SpriteWidget(AssetManager.loadSprite("Oryx/Custom/items/coin_break_1"), 128f, 128f)
+					val crack2 = SpriteWidget(AssetManager.loadSprite("Oryx/Custom/items/coin_break_2"), 128f, 128f)
+					val crack3 = SpriteWidget(AssetManager.loadSprite("Oryx/Custom/items/coin_break_3"), 128f, 128f)
+
+					val stack = Stack()
+					stack.add(coin)
+
+					stack.setPosition(Statics.stage.width / 2f - 64f, Statics.stage.height / 2f - 64f)
+					stack.setSize(128f, 128f)
+
+					val bumpDur = 0.1f
+					val bumpDist = 16f
+					val delay = 0.6f
+
+					val sequence =
+						// crack 1
+						delay(delay) then
+							parallel(
+								bump(Vector2(Random.random(-1f, 1f), Random.random(-1f, 1f)).nor(), bumpDist, bumpDur),
+								lambda {
+									crack1.alpha = 0f
+									crack1.addAction(fadeIn(bumpDur * 0.5f))
+									stack.add(crack1)
+								}) then
+
+							// crack 2
+							delay(delay) then
+							parallel(
+								bump(Vector2(Random.random(-1f, 1f), Random.random(-1f, 1f)).nor(), bumpDist, bumpDur),
+								lambda {
+									crack2.alpha = 0f
+									crack2.addAction(fadeIn(bumpDur * 0.5f))
+									stack.add(crack2)
+								}) then
+
+							// crack 3
+							delay(delay) then
+							parallel(
+								bump(Vector2(Random.random(-1f, 1f), Random.random(-1f, 1f)).nor(), bumpDist, bumpDur),
+								lambda {
+									crack3.alpha = 0f
+									crack3.addAction(fadeIn(bumpDur * 0.5f))
+									stack.add(crack3)
+								})
+
+					stack.addAction(sequence)
+
+					Statics.stage.addActor(stack)
+
+					Future.call(
+						{
+							stack.remove()
+
+							val effect = AssetManager.loadParticleEffect("ChestOpen").getParticleEffect()
+							val particleActor = ParticleEffectActor(effect, true)
+							particleActor.setSize(128f, 128f)
+							particleActor.setPosition(Statics.stage.width / 2f - 64f, Statics.stage.height / 2f - 64f)
+							Statics.stage.addActor(particleActor)
+
+							Future.call(
+								{
+									for (card in cards)
+									{
+										Statics.stage.addActor(card)
+									}
+
+									layoutCards(cards, Direction.CENTER, cardsTable, startScale = 0.3f, flip = true)
+								}, 0.4f)
+						}, delay * 4 + bumpDur * 3)
 				}
 			}
 		}
