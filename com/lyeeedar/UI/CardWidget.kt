@@ -353,6 +353,7 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 			stack.add(buttonTable)
 
 			zoomTable.add(stack).grow()
+			zoomTable.row()
 
 			val closeButton = Button(Statics.skin, "closecard")
 			closeButton.addClickListener {
@@ -376,7 +377,7 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 				pickButtonTable.add(pickButton).uniform()
 			}
 
-			buttonTable.add(pickButtonTable).expand().bottom().pad(10f)
+			zoomTable.add(pickButtonTable).expandX().bottom().pad(5f)
 		}
 
 		// Create holder
