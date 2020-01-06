@@ -40,17 +40,17 @@ abstract class AbstractScreen() : Screen, InputProcessor, GestureDetector.Gestur
 	// ----------------------------------------------------------------------
 	fun fadeOutTransition(time: Float)
 	{
-		fadeTime = time
-		fadeAccumulator = time
-		fadeType = FadeType.OUT
+		//fadeTime = time
+		//fadeAccumulator = time
+		//fadeType = FadeType.OUT
 	}
 
 	// ----------------------------------------------------------------------
 	fun fadeInTransition(time: Float)
 	{
-		fadeTime = time
-		fadeAccumulator = time
-		fadeType = FadeType.IN
+		//fadeTime = time
+		//fadeAccumulator = time
+		//fadeType = FadeType.IN
 	}
 
 	// ----------------------------------------------------------------------
@@ -294,11 +294,11 @@ abstract class AbstractScreen() : Screen, InputProcessor, GestureDetector.Gestur
 			debugConsole = DebugConsole(this.javaClass.simpleName)
 			debugConsoleTable.add(debugConsole).width(300f).expand().left().top().pad(5f)
 
-			debugConsole.register("CurrentScreen", "", { args, console ->
+			debugConsole.register("CurrentScreen", "") { args, console ->
 				console.write(this.javaClass.simpleName)
 
 				true
-			})
+			}
 
 			debugConsole.isVisible = false
 		}

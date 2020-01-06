@@ -55,6 +55,11 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 
 	init
 	{
+		if (frontTable == frontDetailTable)
+		{
+			throw RuntimeException("Front table cannot equal front detail table!")
+		}
+
 		addActor(contentTable)
 		contentTable.background = NinePatchDrawable(back).tint(colour.color())
 
@@ -303,15 +308,27 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 		val collapseSequence = lambda {
 			zoomTable.clear()
 
+			val detailTable = Table()
+			detailTable.add(frontDetailTable).grow()
+			detailTable.row()
+
+			val pickButtonTable = Table()
+			for (pick in pickFuns)
+			{
+				val pickButton =  TextButton(pick.string, Statics.skin, "defaultcard")
+				pickButtonTable.add(pickButton).uniform()
+			}
+			detailTable.add(pickButtonTable).expandX().bottom().pad(5f)
+
 			val stack = Stack()
-			stack.add(frontDetailTable)
+			stack.add(detailTable)
 			stack.add(frontTable)
 			zoomTable.add(stack).grow()
 
 			val hideSequence = alpha(1f) then fadeOut(speed)
 			val showSequence = alpha(0f) then fadeIn(speed)
 
-			frontDetailTable.addAction(hideSequence)
+			detailTable.addAction(hideSequence)
 			frontTable.addAction(showSequence)
 		} then parallel(scaleTo(currentScale, currentScale, speed), moveTo(point.x, point.y, speed)) then lambda {
 			fullscreen = false
@@ -333,8 +350,21 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 		val expandSequence = lambda {
 			contentTable.clear()
 
+			frontDetailTable.alpha = 1f
+			val detailTable = Table()
+			detailTable.add(frontDetailTable).grow()
+			detailTable.row()
+
+			val pickButtonTable = Table()
+			for (pick in pickFuns)
+			{
+				val pickButton =  TextButton(pick.string, Statics.skin, "defaultcard")
+				pickButtonTable.add(pickButton).uniform()
+			}
+			detailTable.add(pickButtonTable).expandX().bottom().pad(5f)
+
 			val stack = Stack()
-			stack.add(frontDetailTable)
+			stack.add(detailTable)
 			stack.add(frontTable)
 			zoomTable.add(stack).grow()
 
@@ -342,7 +372,7 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 			val showSequence = alpha(0f) then fadeIn(speed)
 
 			frontTable.addAction(hideSequence)
-			frontDetailTable.addAction(showSequence)
+			detailTable.addAction(showSequence)
 		} then parallel(scaleTo(1f, 1f, speed), moveTo(destX, destY, speed)) then lambda {
 			zoomTable.clear()
 
@@ -450,7 +480,7 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 			val top = Label(title, Statics.skin, "cardrewardtitle")
 			top.setWrap(true)
 			top.setAlignment(Align.center)
-			table.add(top).expandX().padTop(10f).center().width(Value.percentWidth(1f, table))
+			table.add(top).growX().padTop(10f).center()
 			table.row()
 			table.add(SpriteWidget(icon, 64f, 64f)).grow()
 			table.row()
@@ -460,7 +490,7 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 				val bottom = Label(bottomText, Statics.skin, "cardrewardtitle")
 				bottom.setWrap(true)
 				bottom.setAlignment(Align.center)
-				table.add(bottom).expandX().padTop(10f).center().width(Value.percentWidth(1f, table))
+				table.add(bottom).growX().pad(10f).center()
 			}
 
 			return table
