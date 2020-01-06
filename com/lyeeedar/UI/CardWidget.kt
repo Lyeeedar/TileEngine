@@ -406,6 +406,38 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 		Statics.stage.addActor(table)
 	}
 
+	enum class DissolveType
+	{
+		BURN,
+		HOLY,
+		ACID
+	}
+	fun dissolve(type: DissolveType, duration: Float, smoothness: Float)
+	{
+		val table = Table()
+		table.isTransform = true
+		table.originX = referenceWidth / 2
+		table.originY = referenceHeight / 2
+		table.background = contentTable.background
+		table.setSize(referenceWidth, referenceHeight)
+		table.setScale(contentTable.scaleX)
+		table.setPosition(x + contentTable.x, y + contentTable.y)
+
+		val gradient = when(type)
+		{
+			DissolveType.BURN -> AssetManager.loadTextureRegion("GUI/burngradient")!!
+			DissolveType.HOLY -> AssetManager.loadTextureRegion("GUI/holygradient")!!
+			DissolveType.ACID -> AssetManager.loadTextureRegion("GUI/acidgradient")!!
+		}
+
+		val cardDissolve = DissolveEffect(table, duration, gradient, smoothness)
+		cardDissolve.setPosition(x, y)
+		cardDissolve.setSize(width, height)
+
+		Statics.stage.addActor(cardDissolve)
+		remove()
+	}
+
 	companion object
 	{
 		fun layoutCard(card: CardWidget, enterFrom: Direction, dstWidget: Table? = null, animate: Boolean = true)
