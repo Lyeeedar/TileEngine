@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions.*
 import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
+import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Array
 import com.lyeeedar.Direction
 import com.lyeeedar.Renderables.Sprite.Sprite
@@ -442,6 +443,28 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 
 	companion object
 	{
+		fun createFrontTable(title: String, icon: Sprite, bottomText: String? = null): Table
+		{
+			val table = Table()
+			val top = Label(title, Statics.skin, "cardrewardtitle")
+			top.setWrap(true)
+			top.setAlignment(Align.center)
+			table.add(top).expandX().padTop(10f).center().width(Value.percentWidth(1f, table))
+			table.row()
+			table.add(SpriteWidget(icon, 64f, 64f)).grow()
+			table.row()
+
+			if (bottomText != null)
+			{
+				val bottom = Label(bottomText, Statics.skin, "cardrewardtitle")
+				bottom.setWrap(true)
+				bottom.setAlignment(Align.center)
+				table.add(bottom).expandX().padTop(10f).center().width(Value.percentWidth(1f, table))
+			}
+
+			return table
+		}
+
 		fun layoutCard(card: CardWidget, enterFrom: Direction, dstWidget: Table? = null, animate: Boolean = true)
 		{
 			layoutCards(gdxArrayOf(card), enterFrom, dstWidget, animate, flip = true)

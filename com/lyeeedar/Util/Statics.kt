@@ -78,6 +78,9 @@ class Statics
 			val cardTitlefont = AssetManager.loadFont("Sprites/Unpacked/font.ttf", 18, Color(0f, 0.0f, 0.0f, 1f), 0, Color.BLACK, false)
 			skin.add("cardtitle", cardTitlefont)
 
+			val cardRewardTitlefont = AssetManager.loadFont("Sprites/Unpacked/font.ttf", 28, Color(0f, 0.0f, 0.0f, 1f), 0, Color.BLACK, false)
+			skin.add("cardrewardtitle", cardRewardTitlefont)
+
 			val popupfont = AssetManager.loadFont("Sprites/Unpacked/font.ttf", 20, Color(1f, 1f, 1f, 1f), 1, Color.DARK_GRAY, true)
 			skin.add("popup", popupfont)
 
@@ -145,6 +148,10 @@ class Statics
 			val cardTitleLabel = Label.LabelStyle()
 			cardTitleLabel.font = skin.getFont("cardtitle")
 			skin.add("cardtitle", cardTitleLabel)
+
+			val cardRewardTitleLabel = Label.LabelStyle()
+			cardRewardTitleLabel.font = skin.getFont("cardrewardtitle")
+			skin.add("cardrewardtitle", cardRewardTitleLabel)
 
 			val checkButton = CheckBox.CheckBoxStyle()
 			checkButton.checkboxOff = TextureRegionDrawable(AssetManager.loadTextureRegion("Sprites/GUI/Unchecked.png"))
