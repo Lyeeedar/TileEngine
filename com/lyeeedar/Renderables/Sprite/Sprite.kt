@@ -61,6 +61,8 @@ class Sprite(val fileName: String, var animationDelay: Float, var textures: Arra
 
 	var smoothShade = false
 
+	var tintLight = false
+
 	private val tempColour = Colour()
 	private val tempVec = Vector3()
 
@@ -151,6 +153,16 @@ class Sprite(val fileName: String, var animationDelay: Float, var textures: Arra
 			completionCallback = null
 		}
 
+		if (tintLight && light != null)
+		{
+			val colour =
+				if (colourAnimation != null) colourAnimation!!.renderColour()!!
+				else if (animation?.renderColour() != null) animation!!.renderColour()!!
+				else this.colour
+
+			light!!.colour.set(light!!.baseColour).mul(colour)
+		}
+
 		if (!completed) completed = looped
 		return looped
 	}
@@ -193,7 +205,10 @@ class Sprite(val fileName: String, var animationDelay: Float, var textures: Arra
 
 	private fun render(batch: Batch, x: Float, y: Float, width: Float, height: Float, scaleX: Float, scaleY: Float, texIndex: Int, rotation: Float)
 	{
-		val colour = if (colourAnimation != null) colourAnimation!!.renderColour()!! else if (animation?.renderColour() != null) animation!!.renderColour()!! else this.colour
+		val colour =
+			if (colourAnimation != null) colourAnimation!!.renderColour()!!
+			else if (animation?.renderColour() != null) animation!!.renderColour()!!
+			else this.colour
 
 		if (colour.a == 0f)
 		{
@@ -428,6 +443,7 @@ class Sprite(val fileName: String, var animationDelay: Float, var textures: Arra
 		sprite.disableHDR = disableHDR
 		sprite.light = light?.copy()
 		sprite.colour = colour.copy()
+		sprite.tintLight = tintLight
 
 		return sprite
 	}

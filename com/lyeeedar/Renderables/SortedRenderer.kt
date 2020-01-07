@@ -1099,7 +1099,7 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 
 		if (sprite.light != null)
 		{
-			addLight(sprite.light!!, ix + 0.5f, iy + 0.5f)
+			addLight(sprite.light!!, lx + 0.5f, ly + 0.5f)
 		}
 
 		// check if onscreen

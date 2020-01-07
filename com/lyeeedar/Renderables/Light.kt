@@ -69,11 +69,13 @@ class Light(colour: Colour? = null, brightness: Float = 1f, range: Float = 3f, h
 
 	fun copy(): Light
 	{
-		val light = Light(colour, range)
-		light.baseColour.set(baseColour)
-		light.baseBrightness = baseBrightness
-		light.baseRange = baseRange
+		val light = Light(baseColour, baseBrightness, baseRange)
 		light.anim = anim?.copy()
+
+		light.colour.set(colour)
+		light.brightness = brightness
+		light.range = range
+
 		return light
 	}
 
@@ -160,8 +162,8 @@ class PulseLightAnimation : LightAnimation()
 		val range = startRange.lerp(targetRange, alpha)
 
 		light.colour.set(light.baseColour)
-		light.brightness = brightness
-		light.range = range
+		light.brightness = light.baseBrightness * brightness
+		light.range = light.baseRange * range
 	}
 
 	override fun parse(xmlData: XmlData)
