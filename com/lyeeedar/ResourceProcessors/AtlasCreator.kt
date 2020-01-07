@@ -227,7 +227,7 @@ class AtlasCreator
 			val found = processSprite(el)
 			if (!found)
 			{
-				throw RuntimeException("Failed to find sprite for file: " + file)
+				throw RuntimeException("Failed to find sprite $el for file: $file")
 			}
 		}
 
@@ -239,7 +239,7 @@ class AtlasCreator
 			val succeed = processTilingSprite(el)
 			if (!succeed)
 			{
-				throw RuntimeException("Failed to process tiling sprite in file: " + file)
+				throw RuntimeException("Failed to process tiling sprite $el in file: $file")
 			}
 		}
 
@@ -251,7 +251,7 @@ class AtlasCreator
 			val succeed = processDirectedSprite(el)
 			if (!succeed)
 			{
-				throw RuntimeException("Failed to process directed sprite in file: " + file)
+				throw RuntimeException("Failed to process directed sprite $el in file: $file")
 			}
 		}
 
@@ -263,7 +263,7 @@ class AtlasCreator
 			val succeed = processLayeredSprite(el)
 			if (!succeed)
 			{
-				throw RuntimeException("Failed to process layered sprite in file: " + file)
+				throw RuntimeException("Failed to process layered sprite $el in file: $file")
 			}
 		}
 
@@ -275,7 +275,7 @@ class AtlasCreator
 			val succeed = processMaskedTexture(el)
 			if (!succeed)
 			{
-				throw RuntimeException("Failed to process masked texture in file: " + file)
+				throw RuntimeException("Failed to process masked texture $el in file: $file")
 			}
 		}
 
@@ -287,7 +287,7 @@ class AtlasCreator
 			val succeed = tryPackSprite(el.get("File"))
 			if (!succeed)
 			{
-				throw RuntimeException("Failed to process texture in file: " + file)
+				throw RuntimeException("Failed to process texture $el in file: $file")
 			}
 		}
 
@@ -298,7 +298,7 @@ class AtlasCreator
 			val succeed = processParticle(el)
 			if (!succeed)
 			{
-				throw RuntimeException("Failed to process particle in file: " + file)
+				throw RuntimeException("Failed to process particle $el in file: $file")
 			}
 		}
 	}
