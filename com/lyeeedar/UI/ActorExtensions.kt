@@ -92,7 +92,7 @@ fun Actor.addTapToolTip(content: String): Actor
 		val tooltip = Tooltip(table, Statics.skin, Statics.stage)
 
 		val fullscreenTable = Table()
-		fullscreenTable.touchable = com.badlogic.gdx.scenes.scene2d.Touchable.enabled
+		fullscreenTable.touchable = Touchable.enabled
 		fullscreenTable.setFillParent(true)
 		fullscreenTable.addClickListener {
 			tooltip.remove()
@@ -123,4 +123,27 @@ fun Actor.addToolTip(title: String, body: String, stage: Stage): Actor
 	this.addListener(TooltipListener(tooltip))
 
 	return this
+}
+
+fun String.showTooltip(event: InputEvent?, x: Float, y: Float)
+{
+	val table = Table()
+	val label = Label(this, Statics.skin)
+	label.setWrap(true)
+	table.add(label).grow().pad(10f).prefWidth(200f).center()
+
+	val tooltip = Tooltip(table, Statics.skin, Statics.stage)
+
+	val fullscreenTable = Table()
+	fullscreenTable.touchable = Touchable.enabled
+	fullscreenTable.setFillParent(true)
+	fullscreenTable.addClickListener {
+		tooltip.remove()
+		Tooltip.openTooltip = null
+		fullscreenTable.remove()
+	}
+	Statics.stage.addActor(fullscreenTable)
+
+	tooltip.toFront()
+	tooltip.show(event, x, y)
 }

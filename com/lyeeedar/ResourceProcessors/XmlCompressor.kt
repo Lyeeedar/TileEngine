@@ -74,8 +74,9 @@ class XmlCompressor
 	}
 
 	private fun processXml(path: String)
-	{
-		val relativePath = path.replace("\\", "/").replace("$rootPath/", "")
+	{	
+		val root = rootPath.replace("\\", "/")
+		val relativePath = path.replace("\\", "/").replace("$root/", "")
 
 		val rawxml = getRawXml("../assetsraw/$relativePath")
 		val data = XmlData.loadFromElement(rawxml)

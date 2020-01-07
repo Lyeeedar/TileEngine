@@ -37,7 +37,7 @@ class MessageBox(title: String, message: String, vararg buttons: Pair<String, ()
 				this@MessageBox.remove()
 				button.second()
 			}
-			buttonTable.add(b).expand()
+			buttonTable.add(b).expand().pad(5f)
 		}
 
 		table.add(buttonTable).expandX().fillX().pad(15f)

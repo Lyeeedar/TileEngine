@@ -73,7 +73,7 @@ open class FullscreenTable(opacity: Float = 0.4f) : Table()
 
 		fun createCard(content: Table, point: Vector2)
 		{
-			val cardWidget = CardWidget(content, content, AssetManager.loadTextureRegion("white")!!, null)
+			val cardWidget = CardWidget(Table(), content, AssetManager.loadTextureRegion("white")!!, null)
 			cardWidget.setSize(24f, 24f)
 			cardWidget.setPosition(point.x, point.y)
 

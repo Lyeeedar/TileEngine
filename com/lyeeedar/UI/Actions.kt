@@ -6,6 +6,32 @@ import com.lyeeedar.Util.Random
 import com.lyeeedar.Util.getRotation
 import com.lyeeedar.Util.lerp
 
+class BumpAction(val direction: Vector2, val distance: Float, val duration: Float) : Action()
+{
+	var time = 0f
+
+	var offsetx = 0f
+	var offsety = 0f
+
+	override fun act(delta: Float): Boolean
+	{
+		time += delta
+
+		val alpha = 1f - MathUtils.clamp(Math.abs((time - duration / 2f) / (duration / 2f)), 0f, 1f)
+
+		target.moveBy(-offsetx, -offsety)
+
+		offsetx = direction.x * alpha * distance
+		offsety = direction.y * alpha * distance
+
+		target.moveBy(offsetx, offsety)
+
+		return time >= duration
+	}
+}
+
+fun bump(direction: Vector2, distance: Float, duration: Float): BumpAction = BumpAction(direction, distance, duration)
+
 class ShakeAction(val amount: Float, val speed: Float, val duration: Float) : Action()
 {
 	var time = 0f

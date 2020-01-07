@@ -42,9 +42,14 @@ class AtlasCreator
 		println("")
 
 		buildTilingMasksArray()
+		
+		println(">>>>>> Parsing resources <<<<<<<<")
 		findFilesRecursive(File("../assetsraw").absoluteFile)
+		
+		println(">>>>>> Parsing code <<<<<<<<")
 		parseCodeFilesRecursive(File("../../core/src").absoluteFile)
 
+		println(">>>>>> Checking Cache <<<<<<<<")
 		var doPack = true
 		val thisHash = packedPaths.sorted().joinToString().hashCode()
 
@@ -62,6 +67,8 @@ class AtlasCreator
 
 		if (doPack)
 		{
+			println(">>>>>> Packing <<<<<<<<")
+		
 			val outDir = File("../assetsraw/Atlases")
 			val contents = outDir.listFiles()
 			if (contents != null)
@@ -158,7 +165,11 @@ class AtlasCreator
 			path = path.replace("AssetManager.loadSprite(\"", "")
 			path = path.replace("\"", "")
 
-			processSprite(path)
+			val found = processSprite(path)
+			if (!found && !(path.contains("*") || path.contains("$")))
+			{
+				throw RuntimeException("Failed to find sprite for file: " + path)
+			}
 		}
 
 		val regex2 = Regex("AssetManager.loadTextureRegion\\(\".*?\"")//(\".*\")")
@@ -171,7 +182,11 @@ class AtlasCreator
 			path = path.replace("AssetManager.loadTextureRegion(\"", "")
 			path = path.replace("\"", "")
 
-			processSprite(path)
+			val found = processSprite(path)
+			if (!found && !(path.contains("*") || path.contains("$")))
+			{
+				throw RuntimeException("Failed to find sprite for file: " + path)
+			}
 		}
 
 		val tilingRegex = Regex("TilingSprite\\(\".*?\", \".*?\", \".*?\"")
@@ -183,7 +198,11 @@ class AtlasCreator
 			val baseName = split[1]
 			val maskName = split[2].subSequence(0, split[2].length-1).toString()
 
-			processTilingSprite(baseName, maskName, false)
+			val succeed = processTilingSprite(baseName, maskName, false)
+			if (!succeed)
+			{
+				throw RuntimeException("Failed to process tilingSprite: base: " + baseName + " mask: " + maskName)
+			}
 		}
 
 		val oryxRegex = Regex("\"Oryx/.*\"")
@@ -195,7 +214,11 @@ class AtlasCreator
 			var path = occurance.value
 			path = path.replace("\"", "")
 
-			processSprite(path)
+			val found = processSprite(path)
+			if (!found && !(path.contains("*") || path.contains("$")))
+			{
+				throw RuntimeException("Failed to find sprite for file: " + path)
+			}
 		}
 	}
 

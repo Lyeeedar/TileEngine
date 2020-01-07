@@ -8,10 +8,12 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Touchable
+import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.actions.Actions.*
 import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
+import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Array
 import com.lyeeedar.Direction
 import com.lyeeedar.Renderables.Sprite.Sprite
@@ -19,6 +21,7 @@ import com.lyeeedar.Util.*
 import ktx.actors.alpha
 import ktx.actors.then
 import ktx.collections.gdxArrayOf
+import ktx.collections.toGdxArray
 
 data class Pick(val string: String, var pickFun: (card: CardWidget) -> Unit)
 
@@ -52,6 +55,11 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 
 	init
 	{
+		if (frontTable == frontDetailTable)
+		{
+			throw RuntimeException("Front table cannot equal front detail table!")
+		}
+
 		addActor(contentTable)
 		contentTable.background = NinePatchDrawable(back).tint(colour.color())
 
@@ -300,15 +308,27 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 		val collapseSequence = lambda {
 			zoomTable.clear()
 
+			val detailTable = Table()
+			detailTable.add(frontDetailTable).grow()
+			detailTable.row()
+
+			val pickButtonTable = Table()
+			for (pick in pickFuns)
+			{
+				val pickButton =  TextButton(pick.string, Statics.skin, "defaultcard")
+				pickButtonTable.add(pickButton).uniform()
+			}
+			detailTable.add(pickButtonTable).expandX().bottom().pad(5f)
+
 			val stack = Stack()
-			stack.add(frontDetailTable)
+			stack.add(detailTable)
 			stack.add(frontTable)
 			zoomTable.add(stack).grow()
 
 			val hideSequence = alpha(1f) then fadeOut(speed)
 			val showSequence = alpha(0f) then fadeIn(speed)
 
-			frontDetailTable.addAction(hideSequence)
+			detailTable.addAction(hideSequence)
 			frontTable.addAction(showSequence)
 		} then parallel(scaleTo(currentScale, currentScale, speed), moveTo(point.x, point.y, speed)) then lambda {
 			fullscreen = false
@@ -330,8 +350,21 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 		val expandSequence = lambda {
 			contentTable.clear()
 
+			frontDetailTable.alpha = 1f
+			val detailTable = Table()
+			detailTable.add(frontDetailTable).grow()
+			detailTable.row()
+
+			val pickButtonTable = Table()
+			for (pick in pickFuns)
+			{
+				val pickButton =  TextButton(pick.string, Statics.skin, "defaultcard")
+				pickButtonTable.add(pickButton).uniform()
+			}
+			detailTable.add(pickButtonTable).expandX().bottom().pad(5f)
+
 			val stack = Stack()
-			stack.add(frontDetailTable)
+			stack.add(detailTable)
 			stack.add(frontTable)
 			zoomTable.add(stack).grow()
 
@@ -339,7 +372,7 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 			val showSequence = alpha(0f) then fadeIn(speed)
 
 			frontTable.addAction(hideSequence)
-			frontDetailTable.addAction(showSequence)
+			detailTable.addAction(showSequence)
 		} then parallel(scaleTo(1f, 1f, speed), moveTo(destX, destY, speed)) then lambda {
 			zoomTable.clear()
 
@@ -350,6 +383,7 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 			stack.add(buttonTable)
 
 			zoomTable.add(stack).grow()
+			zoomTable.row()
 
 			val closeButton = Button(Statics.skin, "closecard")
 			closeButton.addClickListener {
@@ -373,7 +407,7 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 				pickButtonTable.add(pickButton).uniform()
 			}
 
-			buttonTable.add(pickButtonTable).expand().bottom().pad(10f)
+			zoomTable.add(pickButtonTable).expandX().bottom().pad(5f)
 		}
 
 		// Create holder
@@ -406,8 +440,62 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 		Statics.stage.addActor(table)
 	}
 
+	enum class DissolveType
+	{
+		BURN,
+		HOLY,
+		ACID
+	}
+	fun dissolve(type: DissolveType, duration: Float, smoothness: Float)
+	{
+		val table = Table()
+		table.isTransform = true
+		table.originX = referenceWidth / 2
+		table.originY = referenceHeight / 2
+		table.background = contentTable.background
+		table.setSize(referenceWidth, referenceHeight)
+		table.setScale(contentTable.scaleX)
+		table.setPosition(x + contentTable.x, y + contentTable.y)
+
+		val gradient = when(type)
+		{
+			DissolveType.BURN -> AssetManager.loadTextureRegion("GUI/burngradient")!!
+			DissolveType.HOLY -> AssetManager.loadTextureRegion("GUI/holygradient")!!
+			DissolveType.ACID -> AssetManager.loadTextureRegion("GUI/acidgradient")!!
+		}
+
+		val cardDissolve = DissolveEffect(table, duration, gradient, smoothness)
+		cardDissolve.setPosition(x, y)
+		cardDissolve.setSize(width, height)
+
+		Statics.stage.addActor(cardDissolve)
+		remove()
+	}
+
 	companion object
 	{
+		fun createFrontTable(title: String, icon: Sprite, bottomText: String? = null): Table
+		{
+			val table = Table()
+			val top = Label(title, Statics.skin, "cardrewardtitle")
+			top.setWrap(true)
+			top.setAlignment(Align.center)
+			table.add(top).growX().padTop(10f).center()
+			table.row()
+			table.add(SpriteWidget(icon, 64f, 64f)).grow()
+			table.row()
+
+			if (bottomText != null)
+			{
+				val bottom = Label(bottomText, Statics.skin, "cardrewardtitle")
+				bottom.setWrap(true)
+				bottom.setAlignment(Align.center)
+				table.add(bottom).growX().pad(10f).center()
+			}
+
+			return table
+		}
+
 		fun layoutCard(card: CardWidget, enterFrom: Direction, dstWidget: Table? = null, animate: Boolean = true)
 		{
 			layoutCards(gdxArrayOf(card), enterFrom, dstWidget, animate, flip = true)
@@ -590,6 +678,183 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 					}
 
 					widget.addAction(sequence)
+				}
+			}
+		}
+
+		enum class LootAnimation
+		{
+			CHEST,
+			COIN_GOLD,
+			COIN_SILVER,
+			COIN_BRONZE
+		}
+		fun displayLoot(cards: Array<CardWidget>, animation: LootAnimation, onCompleteAction: ()->Unit)
+		{
+			if (cards.size == 0)
+			{
+				throw RuntimeException("Cannot show loot with 0 cards!")
+			}
+
+			val greyoutTable = createGreyoutTable(Statics.stage)
+
+			val cardsTable = Table()
+			greyoutTable.add(cardsTable).grow()
+			greyoutTable.row()
+
+			val buttonTable = Table()
+			greyoutTable.add(buttonTable).growX()
+
+			val dissolveDur = 1f
+
+			var gatheredLoot = 0
+			for (card in cards)
+			{
+				val oldPickFuns = card.pickFuns.toGdxArray()
+				card.pickFuns.clear()
+
+				for (oldPick in oldPickFuns)
+				{
+					card.addPick(oldPick.string) {
+						card.dissolve(CardWidget.DissolveType.HOLY, dissolveDur, 6f)
+
+						card.isPicked = true
+						oldPick.pickFun(card)
+
+						gatheredLoot++
+						if (gatheredLoot == cards.size)
+						{
+							Future.call(
+								{
+									greyoutTable.fadeOutAndRemove(0.6f)
+									onCompleteAction()
+								}, dissolveDur)
+
+						}
+					}
+				}
+			}
+
+			when (animation)
+			{
+				LootAnimation.CHEST ->
+				{
+					val chestClosed = SpriteWidget(AssetManager.loadSprite("Oryx/uf_split/uf_items/chest_gold"), 128f, 128f)
+					val chestOpen = SpriteWidget(AssetManager.loadSprite("Oryx/uf_split/uf_items/chest_gold_open"), 128f, 128f)
+
+					val wobbleDuration = 1f
+					chestClosed.setPosition(Statics.stage.width / 2f - 64f, Statics.stage.height / 2f - 64f)
+					chestClosed.setSize(128f, 128f)
+					chestClosed.addAction(WobbleAction(0f, 35f, 0.1f, wobbleDuration))
+					Statics.stage.addActor(chestClosed)
+
+					Future.call(
+						{
+							chestClosed.remove()
+
+							chestOpen.setPosition(Statics.stage.width / 2f - 64f, Statics.stage.height / 2f - 64f)
+							chestOpen.setSize(128f, 128f)
+							Statics.stage.addActor(chestOpen)
+
+							val effect = AssetManager.loadParticleEffect("ChestOpen").getParticleEffect()
+							val particleActor = ParticleEffectActor(effect, true)
+							particleActor.setSize(128f, 128f)
+							particleActor.setPosition(Statics.stage.width / 2f - 64f, Statics.stage.height / 2f - 64f)
+							Statics.stage.addActor(particleActor)
+
+							Future.call(
+								{
+									val sequence = Actions.delay(0.2f) then Actions.fadeOut(0.3f) then Actions.removeActor()
+									chestOpen.addAction(sequence)
+
+									for (card in cards)
+									{
+										Statics.stage.addActor(card)
+									}
+
+									layoutCards(cards, Direction.CENTER, cardsTable, startScale = 0.3f, flip = true)
+								}, 0.4f)
+						}, wobbleDuration)
+				}
+
+				LootAnimation.COIN_GOLD, LootAnimation.COIN_BRONZE, LootAnimation.COIN_SILVER ->
+				{
+					val coin = SpriteWidget(AssetManager.loadSprite("Oryx/Custom/items/coin_grey"), 128f, 128f)
+					coin.color = when (animation) {
+						LootAnimation.COIN_GOLD -> Color.GOLD
+						LootAnimation.COIN_SILVER -> Color.WHITE
+						LootAnimation.COIN_BRONZE -> Color.ORANGE
+						else -> throw RuntimeException("Eh?")
+					}
+					val crack1 = SpriteWidget(AssetManager.loadSprite("Oryx/Custom/items/coin_break_1"), 128f, 128f)
+					val crack2 = SpriteWidget(AssetManager.loadSprite("Oryx/Custom/items/coin_break_2"), 128f, 128f)
+					val crack3 = SpriteWidget(AssetManager.loadSprite("Oryx/Custom/items/coin_break_3"), 128f, 128f)
+
+					val stack = Stack()
+					stack.add(coin)
+
+					stack.setPosition(Statics.stage.width / 2f - 64f, Statics.stage.height / 2f - 64f)
+					stack.setSize(128f, 128f)
+
+					val bumpDur = 0.1f
+					val bumpDist = 16f
+					val delay = 0.6f
+
+					val sequence =
+						// crack 1
+						delay(delay) then
+							parallel(
+								bump(Vector2(Random.random(-1f, 1f), Random.random(-1f, 1f)).nor(), bumpDist, bumpDur),
+								lambda {
+									crack1.alpha = 0f
+									crack1.addAction(fadeIn(bumpDur * 0.5f))
+									stack.add(crack1)
+								}) then
+
+							// crack 2
+							delay(delay) then
+							parallel(
+								bump(Vector2(Random.random(-1f, 1f), Random.random(-1f, 1f)).nor(), bumpDist, bumpDur),
+								lambda {
+									crack2.alpha = 0f
+									crack2.addAction(fadeIn(bumpDur * 0.5f))
+									stack.add(crack2)
+								}) then
+
+							// crack 3
+							delay(delay) then
+							parallel(
+								bump(Vector2(Random.random(-1f, 1f), Random.random(-1f, 1f)).nor(), bumpDist, bumpDur),
+								lambda {
+									crack3.alpha = 0f
+									crack3.addAction(fadeIn(bumpDur * 0.5f))
+									stack.add(crack3)
+								})
+
+					stack.addAction(sequence)
+
+					Statics.stage.addActor(stack)
+
+					Future.call(
+						{
+							stack.remove()
+
+							val effect = AssetManager.loadParticleEffect("ChestOpen").getParticleEffect()
+							val particleActor = ParticleEffectActor(effect, true)
+							particleActor.setSize(128f, 128f)
+							particleActor.setPosition(Statics.stage.width / 2f - 64f, Statics.stage.height / 2f - 64f)
+							Statics.stage.addActor(particleActor)
+
+							Future.call(
+								{
+									for (card in cards)
+									{
+										Statics.stage.addActor(card)
+									}
+
+									layoutCards(cards, Direction.CENTER, cardsTable, startScale = 0.3f, flip = true)
+								}, 0.4f)
+						}, delay * 4 + bumpDur * 3)
 				}
 			}
 		}
