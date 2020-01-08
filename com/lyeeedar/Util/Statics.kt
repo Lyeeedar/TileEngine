@@ -23,8 +23,6 @@ class Statics
 {
 	companion object
 	{
-		val PARTICLE_EDITOR = false
-
 		val skin: Skin by lazy { loadSkin() }
 		var fps = 60
 		var android = false

@@ -50,7 +50,7 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 
 	var clickable = true
 
-	private val back = NinePatch(AssetManager.loadTextureRegion("GUI/CardBackground"), 30, 30, 30, 30)
+	private val back = AssetManager.loadTextureRegion("GUI/CardBase")
 	private val backborder = NinePatch(AssetManager.loadTextureRegion("GUI/CardBackgroundBorder"), 30, 30, 30, 30)
 
 	init
@@ -61,7 +61,7 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 		}
 
 		addActor(contentTable)
-		contentTable.background = NinePatchDrawable(back).tint(colour.color())
+		contentTable.background = TextureRegionDrawable(back).tint(colour.color())
 
 		backTable = Table()
 		backTable.add(SpriteWidget(Sprite(backImage), referenceWidth - 60, referenceWidth - 60)).expand().center()
@@ -249,11 +249,11 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 
 			if (faceup)
 			{
-				contentTable.background = LayeredDrawable(NinePatchDrawable(back).tint(colour.color()), NinePatchDrawable(backborder).tint(border.color()))
+				contentTable.background = LayeredDrawable(TextureRegionDrawable(back).tint(colour.color()), NinePatchDrawable(backborder).tint(border.color()))
 			}
 			else
 			{
-				contentTable.background = NinePatchDrawable(back).tint(colour.color())
+				contentTable.background = TextureRegionDrawable(back).tint(colour.color())
 			}
 		}
 
@@ -295,7 +295,7 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 		zoomTable.isTransform = true
 		zoomTable.originX = referenceWidth / 2
 		zoomTable.originY = referenceHeight / 2
-		zoomTable.background = LayeredDrawable(NinePatchDrawable(back).tint(colour.color()), NinePatchDrawable(backborder).tint(border.color()))
+		zoomTable.background = LayeredDrawable(TextureRegionDrawable(back).tint(colour.color()), NinePatchDrawable(backborder).tint(border.color()))
 		zoomTable.setPosition(contentTable.x, contentTable.y)
 		zoomTable.setSize(referenceWidth, referenceHeight)
 		zoomTable.setScale(contentTable.scaleX, contentTable.scaleY)

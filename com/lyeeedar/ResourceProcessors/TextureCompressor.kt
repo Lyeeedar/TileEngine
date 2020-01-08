@@ -1,6 +1,7 @@
 package com.lyeeedar.ResourceProcessors
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.tools.ktx.KTXProcessor
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.ObjectMap
 import com.badlogic.gdx.utils.ObjectSet
@@ -14,6 +15,8 @@ import java.security.MessageDigest
 
 class TextureCompressor
 {
+	val doCompression = false
+
 	val processedFiles = ObjectSet<String>()
 
 	val compiledFileHashes = ObjectMap<String, String>()
@@ -192,7 +195,7 @@ class TextureCompressor
 		val bhash = MessageDigest.getInstance("MD5").digest(bytes)
 		val hash = bhash.fold("", { str, it -> str + "%02x".format(it) })
 
-		val outputPath = "CompressedData/" + file.hashCode().toString() + ".png"
+		val outputPath = "CompressedData/" + file.hashCode().toString() + if (doCompression) ".zktx" else ".png"
 
 		if (compiledFileHashes.containsKey(file) && compiledFileHashes[file] == hash)
 		{
@@ -202,32 +205,21 @@ class TextureCompressor
 
 		compiledFileHashes[file] = hash
 
-		f.copyTo(File(outputPath), true)
+		val outFile = File(outputPath)
+		if (outFile.exists())
+		{
+			outFile.delete()
+		}
 
-//		val toBeRun = "./EtcTool.exe \"${f.path}\" -effort 100 -format RGBA8 -j 16 -output \"$outputPath\""
-//
-//		// do compression
-//		val process = Runtime.getRuntime().exec(toBeRun)
-//
-//		val bri = BufferedReader(InputStreamReader(process.getInputStream()))
-//		val bre = BufferedReader(InputStreamReader(process.getErrorStream()))
-//		var line: String?
-//		while (true)
-//		{
-//			line = bri.readLine()
-//			if (line == null) break
-//
-//			System.out.println(line)
-//		}
-//		bri.close()
-//		while (true)
-//		{
-//			line = bre.readLine()
-//			if (line == null) break
-//			System.out.println(line)
-//		}
-//		bre.close()
-//		process.waitFor()
+		if (doCompression)
+		{
+			KTXProcessor.convert(file, outputPath, true, false, false)
+		}
+		else
+		{
+			f.copyTo(outFile, true)
+		}
+
 		println("Done.")
 
 		processedFiles.add(file)

@@ -70,7 +70,10 @@ abstract class AbstractScreen() : Screen, InputProcessor, GestureDetector.Gestur
 
 		Gdx.input.inputProcessor = inputMultiplexer
 
-		Save.save()
+		if (Statics.game.debugScreenOverride == null)
+		{
+			Save.save()
+		}
 	}
 
 	// ----------------------------------------------------------------------

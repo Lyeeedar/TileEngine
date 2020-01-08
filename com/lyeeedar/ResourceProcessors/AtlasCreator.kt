@@ -41,6 +41,8 @@ class AtlasCreator
 		println("")
 		println("")
 
+		var start = System.currentTimeMillis()
+
 		buildTilingMasksArray()
 
 		println(">>>>>> Parsing resources <<<<<<<<")
@@ -48,6 +50,10 @@ class AtlasCreator
 
 		println(">>>>>> Parsing code <<<<<<<<")
 		parseCodeFilesRecursive(File("../../core/src").absoluteFile)
+
+		println("Parsing completed in ${System.currentTimeMillis() - start}")
+
+		start = System.currentTimeMillis()
 
 		println(">>>>>> Checking Cache <<<<<<<<")
 		var doPack = true
@@ -116,6 +122,8 @@ class AtlasCreator
 
 			cacheFile.writeText(thisHash.toString())
 		}
+
+		println("Packing completed in ${System.currentTimeMillis() - start}")
 	}
 
 	private fun findFilesRecursive(dir: File)
