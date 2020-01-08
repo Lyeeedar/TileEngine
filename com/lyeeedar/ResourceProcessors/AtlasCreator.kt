@@ -42,10 +42,10 @@ class AtlasCreator
 		println("")
 
 		buildTilingMasksArray()
-		
+
 		println(">>>>>> Parsing resources <<<<<<<<")
 		findFilesRecursive(File("../assetsraw").absoluteFile)
-		
+
 		println(">>>>>> Parsing code <<<<<<<<")
 		parseCodeFilesRecursive(File("../../core/src").absoluteFile)
 
@@ -68,7 +68,7 @@ class AtlasCreator
 		if (doPack)
 		{
 			println(">>>>>> Packing <<<<<<<<")
-		
+
 			val outDir = File("../assetsraw/Atlases")
 			val contents = outDir.listFiles()
 			if (contents != null)
@@ -168,7 +168,7 @@ class AtlasCreator
 			val found = processSprite(path)
 			if (!found && !(path.contains("*") || path.contains("$")))
 			{
-				throw RuntimeException("Failed to find sprite for file: " + path)
+				throw RuntimeException("Failed to find sprite for file: $path")
 			}
 		}
 
@@ -185,7 +185,7 @@ class AtlasCreator
 			val found = processSprite(path)
 			if (!found && !(path.contains("*") || path.contains("$")))
 			{
-				throw RuntimeException("Failed to find sprite for file: " + path)
+				throw RuntimeException("Failed to find sprite for file: $path")
 			}
 		}
 
@@ -201,7 +201,7 @@ class AtlasCreator
 			val succeed = processTilingSprite(baseName, maskName, false)
 			if (!succeed)
 			{
-				throw RuntimeException("Failed to process tilingSprite: base: " + baseName + " mask: " + maskName)
+				throw RuntimeException("Failed to process tilingSprite: base: $baseName mask: $maskName")
 			}
 		}
 
@@ -217,7 +217,24 @@ class AtlasCreator
 			val found = processSprite(path)
 			if (!found && !(path.contains("*") || path.contains("$")))
 			{
-				throw RuntimeException("Failed to find sprite for file: " + path)
+				throw RuntimeException("Failed to find sprite for file: $path")
+			}
+		}
+
+		val regexGray = Regex("AssetManager.loadGrayscaleSprite\\(\".*?\"")//(\".*\")")
+
+		val occurancesGray = regexGray.findAll(contents)
+
+		for (occurance in occurancesGray)
+		{
+			var path = occurance.value
+			path = path.replace("AssetManager.loadGrayscaleSprite(\"", "")
+			path = path.replace("\"", "")
+
+			val found = processGrayscaleSprite(path)
+			if (!found && !(path.contains("*") || path.contains("$")))
+			{
+				throw RuntimeException("Failed to find grayscale sprite for file: $path")
 			}
 		}
 	}
@@ -610,7 +627,7 @@ class AtlasCreator
 	private fun tryPackSprite(name: String): Boolean
 	{
 		var path = name
-		if (!path.startsWith("Sprites/")) path = "Sprites/" + path
+		if (!path.startsWith("Sprites/")) path = "Sprites/$path"
 		if (!path.endsWith(".png")) path += ".png"
 
 		if (packedPaths.contains(path))
@@ -698,6 +715,37 @@ class AtlasCreator
 		return foundCount > 0
 	}
 
+	private fun processGrayscaleSprite(basename: String): Boolean
+	{
+		val name = basename + "_grayscale"
+		if (tryPackSprite(name))
+		{
+			println("Grayscale sprite already exists: $name")
+			return true
+		}
+
+		val fileHandle = Gdx.files.internal("../assetsraw/Sprites/$basename.png")
+		if (!fileHandle.exists())
+		{
+			System.err.println("Failed to find sprite layer: $basename")
+			return false
+		}
+
+		val pixmap = Pixmap(fileHandle)
+		val grayScale = ImageUtils.grayscale(pixmap)
+		val image = ImageUtils.pixmapToImage(grayScale)
+
+		grayScale.dispose()
+		pixmap.dispose()
+
+		localGeneratedImages[name] = image
+		packedPaths.add(name)
+
+		println("Added grayscale sprite: $name")
+
+		return true
+	}
+
 	private fun processLayeredSprite(spriteElement: XmlReader.Element): Boolean
 	{
 		val paths = Array<Pair<String, Boolean>>()
@@ -709,7 +757,7 @@ class AtlasCreator
 			val fileHandle = Gdx.files.internal("../assetsraw/Sprites/$name.png")
 			if (!fileHandle.exists())
 			{
-				System.err.println("Failed to find sprite layer: " + name)
+				System.err.println("Failed to find sprite layer: $name")
 				return false
 			}
 
@@ -721,7 +769,7 @@ class AtlasCreator
 
 		if (tryPackSprite(mergedName))
 		{
-			println("Layered sprite already exists: " + mergedName)
+			println("Layered sprite already exists: $mergedName")
 			return true
 		}
 
@@ -745,7 +793,7 @@ class AtlasCreator
 		localGeneratedImages[mergedName] = image
 		packedPaths.add(mergedName)
 
-		println("Added layered sprite: " + mergedName)
+		println("Added layered sprite: $mergedName")
 
 		return true
 	}

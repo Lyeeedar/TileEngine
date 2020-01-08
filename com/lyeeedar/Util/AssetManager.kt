@@ -212,6 +212,11 @@ class AssetManager
 			return effect
 		}
 
+		fun loadGrayscaleSprite(name: String, colour: Colour = Colour(1f, 1f, 1f, 1f), drawActualSize: Boolean = false): Sprite
+		{
+			return loadSprite(name+"_grayscale", 0.5f, colour, drawActualSize)
+		}
+
 		fun loadSprite(name: String, drawActualSize: Boolean): Sprite
 		{
 			return loadSprite(name, 0.5f, Colour(1f, 1f, 1f, 1f), drawActualSize)

@@ -221,4 +221,31 @@ object ImageUtils
 
 		return pixmap
 	}
+
+	fun grayscale(input: Pixmap): Pixmap
+	{
+		// using BT.601
+		// Gray = (Red * 0.299 + Green * 0.587 + Blue * 0.114)
+
+		val pixmap = Pixmap(input.width, input.height, Format.RGBA8888)
+
+		pixmap.setColor(1f, 1f, 1f, 0f)
+		pixmap.fill()
+
+		for (x in 0 until input.width)
+		{
+			for (y in 0 until input.height)
+			{
+				val col = Color()
+				Color.rgba8888ToColor(col, input.getPixel(x, y))
+
+				val gray = col.r * 0.299f + col.g * 0.587f + col.b * 0.114f
+				col.set(gray, gray, gray, col.a)
+
+				pixmap.drawPixel(x, y, Color.rgba8888(col))
+			}
+		}
+
+		return pixmap
+	}
 }
