@@ -346,6 +346,17 @@ class Statics
 			tabPanelStyle.titleButtonSelected = (tabPanelStyle.titleButtonUnselected as NinePatchDrawable).tint(Color(0.8f, 0.8f, 0.8f, 1.0f))
 			skin.add("default", tabPanelStyle)
 
+			val autoScalingLabelStyle = AutoScalingLabel.AutoScalingLabelStyle()
+			autoScalingLabelStyle.fontFile = "Sprites/Unpacked/font.ttf"
+			autoScalingLabelStyle.colour = Color(0.97f, 0.87f, 0.7f, 1f)
+			skin.add("default", autoScalingLabelStyle)
+
+			val cardAutoScalingLabelStyle = AutoScalingLabel.AutoScalingLabelStyle()
+			cardAutoScalingLabelStyle.fontFile = "Sprites/Unpacked/font.ttf"
+			cardAutoScalingLabelStyle.colour = Color(0.0f, 0.0f, 0.0f, 1f)
+			cardAutoScalingLabelStyle.borderWidth = 0
+			skin.add("card", cardAutoScalingLabelStyle)
+
 			val horiBack = AssetManager.loadTextureRegion("Sprites/GUI/PanelHorizontal.png")
 			val vertBack = AssetManager.loadTextureRegion("Sprites/GUI/PanelVertical.png")
 

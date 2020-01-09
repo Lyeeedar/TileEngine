@@ -1,6 +1,7 @@
 package com.lyeeedar.UI
 
 import com.badlogic.gdx.graphics.g2d.Batch
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.scenes.scene2d.ui.Widget
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Scaling
@@ -8,6 +9,8 @@ import com.lyeeedar.Renderables.Sprite.Sprite
 
 class SpriteWidget(private val drawable: Sprite, val originalWidth: Float, val originalHeight: Float, val fixHeight: Boolean = false, val align: Int = Align.center) : Widget()
 {
+	constructor(textureRegion: TextureRegion) : this(Sprite(textureRegion), textureRegion.regionWidth.toFloat(), textureRegion.regionHeight.toFloat())
+
 	private val scaling = Scaling.fit
 	private var imageX: Float = 0f
 	private var imageY: Float = 0f

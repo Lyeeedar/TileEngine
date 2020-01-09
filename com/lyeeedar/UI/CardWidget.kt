@@ -66,7 +66,7 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 		backTable = Table()
 		backTable.add(SpriteWidget(Sprite(backImage), referenceWidth - 60, referenceWidth - 60)).expand().center()
 
-		contentTable.add(backTable).grow()
+		contentTable.add(backTable).pad(10f).grow()
 
 		contentTable.isTransform = true
 		contentTable.originX = referenceWidth / 2
@@ -244,7 +244,7 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 			this.flipFun?.invoke()
 
 			contentTable.clearChildren()
-			contentTable.add(nextTable).grow()
+			contentTable.add(nextTable).pad(10f).grow()
 			flipping = false
 
 			if (faceup)
@@ -323,7 +323,7 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 			val stack = Stack()
 			stack.add(detailTable)
 			stack.add(frontTable)
-			zoomTable.add(stack).grow()
+			zoomTable.add(stack).pad(10f).grow()
 
 			val hideSequence = alpha(1f) then fadeOut(speed)
 			val showSequence = alpha(0f) then fadeIn(speed)
@@ -339,7 +339,7 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 
 			zoomTable.clear()
 			contentTable.clear()
-			contentTable.add(frontTable).grow()
+			contentTable.add(frontTable).pad(10f).grow()
 
 			//contentTable.setScale(currentScale)
 			//contentTable.setPosition(currentX, currentY)
@@ -366,7 +366,7 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 			val stack = Stack()
 			stack.add(detailTable)
 			stack.add(frontTable)
-			zoomTable.add(stack).grow()
+			zoomTable.add(stack).pad(10f).grow()
 
 			val hideSequence = alpha(1f) then fadeOut(speed)
 			val showSequence = alpha(0f) then fadeIn(speed)
@@ -382,7 +382,7 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 			val buttonTable = Table()
 			stack.add(buttonTable)
 
-			zoomTable.add(stack).grow()
+			zoomTable.add(stack).pad(10f).grow()
 			zoomTable.row()
 
 			val closeButton = Button(Statics.skin, "closecard")
@@ -474,16 +474,11 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 
 	companion object
 	{
-		fun createFrontTable(title: String, icon: Sprite, bottomText: String? = null): Table
+		fun createFrontTable(title: String, icon: Sprite, backIcon: TextureRegion? = null, bottomText: String? = null): Table
 		{
+			val divider = AssetManager.loadTextureRegion("GUI/CardTitleDivider")!!
+
 			val table = Table()
-			val top = Label(title, Statics.skin, "cardrewardtitle")
-			top.setWrap(true)
-			top.setAlignment(Align.center)
-			table.add(top).growX().padTop(10f).center()
-			table.row()
-			table.add(SpriteWidget(icon, 64f, 64f)).grow()
-			table.row()
 
 			if (bottomText != null)
 			{
@@ -491,7 +486,29 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 				bottom.setWrap(true)
 				bottom.setAlignment(Align.center)
 				table.add(bottom).growX().pad(10f).center()
+				table.row()
 			}
+
+			table.add(SpriteWidget(icon, 64f, 64f)).padTop(20f).grow()
+			table.row()
+
+			table.add(SpriteWidget(divider)).growX()
+			table.row()
+
+			val bottomTable = Table()
+			bottomTable.height = 50f
+
+			if (backIcon != null)
+			bottomTable.add(SpriteWidget(backIcon).tint(Color(0.7f, 0.7f, 0.7f, 0.5f)))
+
+			val top = AutoScalingLabel(title, Statics.skin, "card")
+			bottomTable.add(top).growX().center().pad(5f)
+
+			if (backIcon != null)
+			bottomTable.add(SpriteWidget(backIcon).tint(Color(0.7f, 0.7f, 0.7f, 0.5f)))
+
+			table.add(bottomTable).height(50f).growX()
+			table.row()
 
 			return table
 		}
