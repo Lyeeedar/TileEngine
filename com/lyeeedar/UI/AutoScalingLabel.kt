@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Widget
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Array
 import com.lyeeedar.Util.AssetManager
+import ktx.actors.alpha
 
 
 class AutoScalingLabel(var text: String, val skin: Skin, style: String = "default") : Widget()
@@ -43,17 +44,16 @@ class AutoScalingLabel(var text: String, val skin: Skin, style: String = "defaul
 
 			chosenFont = font
 		}
-
-		layout.setText(chosenFont, text, Color.WHITE, width, Align.center, false)
 	}
 
 	val tempCol = Color()
 	override fun draw(batch: Batch, parentAlpha: Float)
 	{
 		tempCol.set(color)
-		tempCol.a = parentAlpha
-		batch.color = tempCol
+		tempCol.mul(batch.color)
+		tempCol.a = parentAlpha * alpha
 
+		layout.setText(chosenFont, text, tempCol, width, Align.center, false)
 		chosenFont.draw(batch, layout, x, y + layout.height * 0.5f)
 	}
 

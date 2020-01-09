@@ -213,7 +213,7 @@ class AtlasCreator
 			}
 		}
 
-		val oryxRegex = Regex("\"Oryx/.*\"")
+		val oryxRegex = Regex("\"Oryx/.*?\"")
 
 		val occurancesOryx = oryxRegex.findAll(contents)
 
