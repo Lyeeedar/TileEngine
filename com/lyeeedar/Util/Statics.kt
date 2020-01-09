@@ -26,7 +26,7 @@ class Statics
 		val skin: Skin by lazy { loadSkin() }
 		var fps = 60
 		var android = false
-		val release = false
+		var release = false
 		val debug: Boolean
 			get() = !release
 

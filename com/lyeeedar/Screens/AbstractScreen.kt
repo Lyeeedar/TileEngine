@@ -18,6 +18,7 @@ import com.lyeeedar.Util.Future
 import com.lyeeedar.Util.KeyMapping
 import com.lyeeedar.Util.KeySource
 import com.lyeeedar.Util.Statics
+import com.lyeeedar.DEBUG_SCREEN_OVERRIDE
 import ktx.actors.setKeyboardFocus
 
 
@@ -70,7 +71,7 @@ abstract class AbstractScreen() : Screen, InputProcessor, GestureDetector.Gestur
 
 		Gdx.input.inputProcessor = inputMultiplexer
 
-		if (Statics.game.debugScreenOverride == null)
+		if (DEBUG_SCREEN_OVERRIDE == null)
 		{
 			Save.save()
 		}
