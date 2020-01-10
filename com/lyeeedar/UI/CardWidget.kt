@@ -463,87 +463,44 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 
 		fun createFrontTable(desc: FrontTableSimple): Table
 		{
-			val table = Table()
-
-			val typeTable = Table()
-			typeTable.alpha = 0.4f
-			val typeLabel = AutoScalingLabel(desc.type, 25f, Statics.skin, "card")
-
-			typeTable.add(typeLabel).growX().center()
-			table.add(typeTable).expandX().center().width(80f).height(25f)
-			table.row()
+			val contentTable = Table()
 
 			if (desc.topText != null)
 			{
 				val bottom = Label(desc.topText, Statics.skin, "cardrewardtitle")
 				bottom.setWrap(true)
 				bottom.setAlignment(Align.center)
-				table.add(bottom).growX().pad(10f).center()
-				table.row()
+				contentTable.add(bottom).growX().pad(10f).center()
+				contentTable.row()
 			}
 
-			table.add(SpriteWidget(desc.image, 64f, 64f, align = Align.bottom)).pad(10f).grow()
-			table.row()
+			contentTable.add(SpriteWidget(desc.image, 64f, 64f, align = Align.bottom)).pad(10f).grow()
+			contentTable.row()
 
-			table.add(Table()).height(40f).growX()
-			table.row()
-
-			val bottomStack = Stack()
-			val titleIconsTable = Table()
-			val bottomTable = Table()
-
-			bottomStack.add(titleIconsTable)
-			bottomStack.add(bottomTable)
-
-			fun addTitleIcons(left: Boolean) {
-				if (desc.titleIcon != null)
-				{
-					val circle = SpriteWidget(cardCircle).tint(Color(1f, 1f, 1f, 0.25f))
-					val icon = SpriteWidget(desc.titleIcon!!.copy()).tint(Color(1f, 1f, 1f, 0.35f))
-
-					val stack = Stack()
-					stack.add(circle)
-					stack.add(icon)
-
-					if (left)
-					{
-						titleIconsTable.add(stack).size(30f).expandX().pad(5f).left()
-					}
-					else
-					{
-						titleIconsTable.add(stack).size(30f).expandX().pad(5f).right()
-					}
-				}
-			}
-
-			addTitleIcons(true)
-			addTitleIcons(false)
-
-			val top = AutoScalingLabel(desc.title, 30f, Statics.skin, "card")
-			bottomTable.add(top).growX().center().pad(3f)
-
-			table.add(bottomStack).height(40f).growX()
-			table.row()
-
-			return table
+			return createCardTable(desc.title, desc.type, desc.titleIcon, contentTable, null)
 		}
 
 		fun createFrontTable(desc: FrontTableComplex): Table
+		{
+			return createCardTable(desc.title, desc.type, desc.titleIcon, desc.content, desc.descriptors)
+		}
+
+		fun createCardTable(title: String, type: String, typeIcon: TextureRegion?, content: Table, descriptors: Array<Pair<Sprite, String?>>? = null): Table
 		{
 			val table = Table()
 
 			val typeTable = Table()
 			typeTable.alpha = 0.4f
-			val typeLabel = AutoScalingLabel(desc.type, 25f, Statics.skin, "card")
+			val typeLabel = AutoScalingLabel(type, 25f, Statics.skin, "card")
 
 			typeTable.add(typeLabel).growX().center()
 			table.add(typeTable).expandX().center().width(80f).height(25f)
 			table.row()
 
-			table.add(desc.content).pad(10f).grow()
+			table.add(content).pad(10f).grow()
 			table.row()
 
-			val circlesTableElevation = 30f
+			val circlesTableElevation = if (descriptors.size > 0) 30f else 0f
 			val circlesTables = Table()
 			for (circleDesc in desc.descriptors)
 			{
@@ -572,21 +529,17 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 			bottomStack.add(circlesTables)
 
 			fun addTitleIcons(left: Boolean) {
-				if (desc.titleIcon != null)
-				{
+				if (typeIcon != null) {
 					val circle = SpriteWidget(cardCircle).tint(Color(1f, 1f, 1f, 0.25f))
-					val icon = SpriteWidget(desc.titleIcon!!.copy()).tint(Color(1f, 1f, 1f, 0.35f))
+					val icon = SpriteWidget(typeIcon.copy()).tint(Color(1f, 1f, 1f, 0.35f))
 
 					val stack = Stack()
 					stack.add(circle)
 					stack.add(icon)
 
-					if (left)
-					{
+					if (left) {
 						titleIconsTable.add(stack).size(30f).expandX().pad(5f).left().padTop(circlesTableElevation + 5f)
-					}
-					else
-					{
+					} else {
 						titleIconsTable.add(stack).size(30f).expandX().pad(5f).right().padTop(circlesTableElevation + 5f)
 					}
 				}
@@ -595,7 +548,7 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 			addTitleIcons(true)
 			addTitleIcons(false)
 
-			val top = AutoScalingLabel(desc.title, 30f, Statics.skin, "card")
+			val top = AutoScalingLabel(title, 30f, Statics.skin, "card")
 			bottomTable.add(top).growX().center().pad(3f).padTop(circlesTableElevation + 3f)
 
 			table.add(bottomStack).height(40f + circlesTableElevation).growX()
@@ -604,53 +557,35 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 			return table
 		}
 
-		fun createFrontTable(title: String, icon: Sprite, backIcon: TextureRegion? = null, bottomText: String? = null): Table
+		fun createCard(title: String, type: String, typeIcon: TextureRegion, smallContent: Table, detailContent: Table, data: Any? = null, colour: Colour = Colour.WHITE)
 		{
-			val table = Table()
+			return CardWidget(
+					createCardTable(title, type, typeIcon, smallContent, null),
+					createCardTable(title, type, typeIcon, detailContent, null),
+					typeIcon,
+					data,
+					colour)
+		}
 
-			if (bottomText != null)
-			{
-				val bottom = Label(bottomText, Statics.skin, "cardrewardtitle")
-				bottom.setWrap(true)
-				bottom.setAlignment(Align.center)
-				table.add(bottom).growX().pad(10f).center()
-				table.row()
-			}
+		fun createCard(title: String, type: String, icon: Sprite, detailContent: Table, typeIcon: TextureRegion, data: Any? = null, colour: Colour = Colour.WHITE, topText: String? = null, descriptors: Array<Pair<Sprite, String?>>? = null): CardWidget
+		{
+			return CardWidget(
+					CardWidget.createFrontTable(
+							FrontTableSimple(title, type, icon.copy(), Sprite(typeIcon), topText)),
+					CardWidget.createFrontTable(
+							FrontTableComplex(title,
+									type,
+									detailContent,
+									Sprite(typeIcon),
+									descriptors ?: gdxArrayOf( Pair(icon.copy(), null)))),
+					typeIcon,
+					data,
+					colour)
+		}
 
-			table.add(SpriteWidget(icon, 64f, 64f)).padTop(20f).grow()
-			table.row()
-
-			table.add(Table()).height(40f).growX()
-			table.row()
-
-			val bottomTable = Table()
-			bottomTable.height = 50f
-
-			fun addTitleIcons() {
-				if (backIcon != null)
-				{
-					val circle = SpriteWidget(cardCircle).tint(Color(1f, 1f, 1f, 0.25f))
-					val icon = SpriteWidget(backIcon).tint(Color(1f, 1f, 1f, 0.35f))
-
-					val stack = Stack()
-					stack.add(circle)
-					stack.add(icon)
-
-					bottomTable.add(stack).size(30f).pad(5f)
-				}
-			}
-
-			addTitleIcons()
-
-			val top = AutoScalingLabel(title, 30f, Statics.skin, "card")
-			bottomTable.add(top).growX().center().pad(5f)
-
-			addTitleIcons()
-
-			table.add(bottomTable).height(40f).growX()
-			table.row()
-
-			return table
+		fun createCard(desc: FrontTableComplex, data: Any? = null, colour: Colour = Colour.WHITE)
+		{
+			return CardWidget(createFrontTable(desc), createFrontTable(desc), desc.titleIcon!!, data, colour)
 		}
 
 		fun layoutCard(card: CardWidget, enterFrom: Direction, dstWidget: Table? = null, animate: Boolean = true)

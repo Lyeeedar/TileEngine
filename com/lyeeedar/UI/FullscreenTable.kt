@@ -71,9 +71,23 @@ open class FullscreenTable(opacity: Float = 0.4f) : Table()
 			return table
 		}
 
-		fun createCard(content: Table, point: Vector2)
+		fun createCard(title: String, type: String, content: Table, point: Vector2)
 		{
-			val cardWidget = CardWidget(Table(), content, AssetManager.loadTextureRegion("white")!!, null)
+			val cardWidget = CardWidget(Table(), CardWidget.createCardTable(title, type, null, content), AssetManager.loadTextureRegion("white")!!, null)
+			cardWidget.setSize(24f, 24f)
+			cardWidget.setPosition(point.x, point.y)
+
+			Statics.stage.addActor(cardWidget)
+
+			cardWidget.focus()
+
+			cardWidget.collapseFun = {
+				cardWidget.remove()
+			}
+		}
+
+		fun createCard(cardWidget: CardWidget, point: Vector2)
+		{
 			cardWidget.setSize(24f, 24f)
 			cardWidget.setPosition(point.x, point.y)
 
