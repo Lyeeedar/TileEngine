@@ -562,11 +562,11 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 			return table
 		}
 
-		fun createCard(title: String, type: String, typeIcon: Sprite, smallContent: Table, detailContent: Table, data: Any? = null, colour: Colour = Colour.WHITE): CardWidget
+		fun createCard(title: String, type: String, typeIcon: Sprite, smallContent: Table, detailContent: Table, data: Any? = null, colour: Colour = Colour.WHITE, descriptors: Array<Pair<Sprite, String?>>? = null): CardWidget
 		{
 			return CardWidget(
-					createCardTable(title, type, typeIcon, smallContent, null),
-					createCardTable(title, type, typeIcon, detailContent, null),
+					createCardTable(title, type, typeIcon, smallContent, descriptors),
+					createCardTable(title, type, typeIcon, detailContent, descriptors),
 					typeIcon.textures[0],
 					data,
 					colour)
