@@ -20,6 +20,7 @@ import ktx.actors.alpha
 import ktx.actors.then
 import ktx.collections.gdxArrayOf
 import ktx.collections.toGdxArray
+import kotlin.math.max
 
 data class Pick(val string: String, var pickFun: (card: CardWidget) -> Unit)
 
@@ -49,6 +50,7 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 	var clickable = true
 
 	private val frontBackground = AssetManager.loadTextureRegion("GUI/CardBase")
+	private val frontBackgroundLarge = AssetManager.loadTextureRegion("GUI/CardBaseLarge")
 	private val cardBack = AssetManager.loadTextureRegion("GUI/CardBack")
 
 	init
@@ -106,9 +108,10 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 		//debug()
 	}
 
-	fun addPick(string: String, pickFun: (card: CardWidget) -> Unit)
+	fun addPick(string: String, pickFun: (card: CardWidget) -> Unit): CardWidget
 	{
 		pickFuns.add(Pick(string, pickFun))
+		return this
 	}
 
 	private data class Bounds(val x: Float, val y: Float, val width: Float, val height: Float)
@@ -247,7 +250,7 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 
 			if (faceup)
 			{
-				contentTable.background = TextureRegionDrawable(frontBackground).tint(colour.color())
+				contentTable.background = TextureRegionDrawable(frontBackgroundLarge).tint(colour.color())
 			}
 			else
 			{
@@ -293,7 +296,7 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 		zoomTable.isTransform = true
 		zoomTable.originX = referenceWidth / 2
 		zoomTable.originY = referenceHeight / 2
-		zoomTable.background = TextureRegionDrawable(frontBackground).tint(colour.color())
+		zoomTable.background = TextureRegionDrawable(frontBackgroundLarge).tint(colour.color())
 		zoomTable.setPosition(contentTable.x, contentTable.y)
 		zoomTable.setSize(referenceWidth, referenceHeight)
 		zoomTable.setScale(contentTable.scaleX, contentTable.scaleY)
@@ -303,20 +306,18 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 		val destX = (stage.width - referenceWidth) / 2f
 		val destY = (stage.height - referenceHeight) / 2f
 
+		val closeButton = Button(Statics.skin, "closecard")
+		closeButton.setSize(24f, 24f)
+		val pickButtonTable = Table()
+
 		val collapseSequence = lambda {
+			closeButton.remove()
+			pickButtonTable.remove()
+
 			zoomTable.clear()
 
 			val detailTable = Table()
 			detailTable.add(frontDetailTable).grow()
-			detailTable.row()
-
-			val pickButtonTable = Table()
-			for (pick in pickFuns)
-			{
-				val pickButton =  TextButton(pick.string, Statics.skin, "defaultcard")
-				pickButtonTable.add(pickButton).uniform()
-			}
-			detailTable.add(pickButtonTable).expandX().bottom().pad(5f)
 
 			val stack = Stack()
 			stack.add(detailTable)
@@ -339,9 +340,6 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 			contentTable.clear()
 			contentTable.add(frontTable).pad(10f).grow()
 
-			//contentTable.setScale(currentScale)
-			//contentTable.setPosition(currentX, currentY)
-
 			collapseFun?.invoke()
 		}
 
@@ -351,15 +349,6 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 			frontDetailTable.alpha = 1f
 			val detailTable = Table()
 			detailTable.add(frontDetailTable).grow()
-			detailTable.row()
-
-			val pickButtonTable = Table()
-			for (pick in pickFuns)
-			{
-				val pickButton =  TextButton(pick.string, Statics.skin, "defaultcard")
-				pickButtonTable.add(pickButton).uniform()
-			}
-			detailTable.add(pickButtonTable).expandX().bottom().pad(5f)
 
 			val stack = Stack()
 			stack.add(detailTable)
@@ -373,39 +362,37 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 			detailTable.addAction(showSequence)
 		} then parallel(scaleTo(1f, 1f, speed), moveTo(destX, destY, speed)) then lambda {
 			zoomTable.clear()
+			zoomTable.add(frontDetailTable).pad(10f).grow()
 
-			val stack = Stack()
-			stack.add(frontDetailTable)
+			stage.addActor(closeButton)
+			closeButton.setPosition(destX + zoomTable.width + 5f, destY + zoomTable.height + 5f)
 
-			val buttonTable = Table()
-			stack.add(buttonTable)
+			stage.addActor(pickButtonTable)
+			pickButtonTable.setPosition(Statics.screenSize.x * 0.5f - pickButtonTable.width * 0.5f, destY - 40f)
+		}
 
-			zoomTable.add(stack).pad(10f).grow()
-			zoomTable.row()
+		closeButton.addClickListener {
+			table.addAction(collapseSequence)
+			background.addAction(fadeOut(speed))
+		}
 
-			val closeButton = Button(Statics.skin, "closecard")
-			closeButton.addClickListener {
+		var pickButtonWidth = 0f
+		for (pick in pickFuns)
+		{
+			val pickButton = TextButton(pick.string, Statics.skin, "defaultcard")
+			pickButtonWidth = max(pickButtonWidth, pickButton.prefWidth)
+		}
+
+		for (pick in pickFuns)
+		{
+			val pickButton = TextButton(pick.string, Statics.skin, "defaultcard")
+			pickButton.addClickListener {
+				pick.pickFun(this)
 				table.addAction(collapseSequence)
 				background.addAction(fadeOut(speed))
 			}
-			buttonTable.add(closeButton).expand().right().top().size(24f).pad(10f)
-			buttonTable.row()
 
-			val pickButtonTable = Table()
-
-			for (pick in pickFuns)
-			{
-				val pickButton =  TextButton(pick.string, Statics.skin, "defaultcard")
-				pickButton.addClickListener {
-					pick.pickFun(this)
-					table.addAction(collapseSequence)
-					background.addAction(fadeOut(speed))
-				}
-
-				pickButtonTable.add(pickButton).uniform()
-			}
-
-			zoomTable.add(pickButtonTable).expandX().bottom().pad(5f)
+			pickButtonTable.add(pickButton).width(pickButtonWidth).pad(10f)
 		}
 
 		// Create holder
@@ -493,10 +480,14 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 			table.add(Table()).height(40f).growX()
 			table.row()
 
+			val bottomStack = Stack()
+			val titleIconsTable = Table()
 			val bottomTable = Table()
-			bottomTable.height = 50f
 
-			fun addTitleIcons() {
+			bottomStack.add(titleIconsTable)
+			bottomStack.add(bottomTable)
+
+			fun addTitleIcons(left: Boolean) {
 				if (desc.titleIcon != null)
 				{
 					val circle = SpriteWidget(cardCircle).tint(Color(1f, 1f, 1f, 0.25f))
@@ -506,18 +497,24 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 					stack.add(circle)
 					stack.add(icon)
 
-					bottomTable.add(stack).size(30f).pad(5f)
+					if (left)
+					{
+						titleIconsTable.add(stack).size(30f).expandX().pad(5f).left()
+					}
+					else
+					{
+						titleIconsTable.add(stack).size(30f).expandX().pad(5f).right()
+					}
 				}
 			}
 
-			addTitleIcons()
+			addTitleIcons(true)
+			addTitleIcons(false)
 
-			val top = AutoScalingLabel(desc.title, Statics.skin, "card")
-			bottomTable.add(top).growX().center().pad(5f)
+			val top = AutoScalingLabel(desc.title, 30f, Statics.skin, "card")
+			bottomTable.add(top).growX().center().pad(3f)
 
-			addTitleIcons()
-
-			table.add(bottomTable).height(50f).growX()
+			table.add(bottomStack).height(40f).growX()
 			table.row()
 
 			return table
@@ -530,6 +527,7 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 			table.add(desc.content).pad(10f).grow()
 			table.row()
 
+			val circlesTableElevation = 30f
 			val circlesTables = Table()
 			for (circleDesc in desc.descriptors)
 			{
@@ -545,16 +543,18 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 					stack.addTapToolTip(circleDesc.second!!)
 				}
 
-				circlesTables.add(stack).expandX().center().height(40f)
+				circlesTables.add(stack).expandX().center().height(40f).padBottom(circlesTableElevation)
 			}
 
-			table.add(circlesTables).height(40f).growX()
-			table.row()
-
+			val bottomStack = Stack()
+			val titleIconsTable = Table()
 			val bottomTable = Table()
-			bottomTable.height = 50f
 
-			fun addTitleIcons() {
+			bottomStack.add(titleIconsTable)
+			bottomStack.add(bottomTable)
+			bottomStack.add(circlesTables)
+
+			fun addTitleIcons(left: Boolean) {
 				if (desc.titleIcon != null)
 				{
 					val circle = SpriteWidget(cardCircle).tint(Color(1f, 1f, 1f, 0.25f))
@@ -564,18 +564,24 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 					stack.add(circle)
 					stack.add(icon)
 
-					bottomTable.add(stack).size(30f).pad(5f)
+					if (left)
+					{
+						titleIconsTable.add(stack).size(30f).expandX().pad(5f).left().padTop(circlesTableElevation + 5f)
+					}
+					else
+					{
+						titleIconsTable.add(stack).size(30f).expandX().pad(5f).right().padTop(circlesTableElevation + 5f)
+					}
 				}
 			}
 
-			addTitleIcons()
+			addTitleIcons(true)
+			addTitleIcons(false)
 
-			val top = AutoScalingLabel(desc.title, Statics.skin, "card")
-			bottomTable.add(top).growX().center().pad(5f)
+			val top = AutoScalingLabel(desc.title, 30f, Statics.skin, "card")
+			bottomTable.add(top).growX().center().pad(3f).padTop(circlesTableElevation + 3f)
 
-			addTitleIcons()
-
-			table.add(bottomTable).height(50f).growX()
+			table.add(bottomStack).height(40f + circlesTableElevation).growX()
 			table.row()
 
 			return table
@@ -619,12 +625,12 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 
 			addTitleIcons()
 
-			val top = AutoScalingLabel(title, Statics.skin, "card")
+			val top = AutoScalingLabel(title, 30f, Statics.skin, "card")
 			bottomTable.add(top).growX().center().pad(5f)
 
 			addTitleIcons()
 
-			table.add(bottomTable).height(50f).growX()
+			table.add(bottomTable).height(40f).growX()
 			table.row()
 
 			return table

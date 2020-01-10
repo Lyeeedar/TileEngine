@@ -13,7 +13,7 @@ import com.lyeeedar.Util.AssetManager
 import ktx.actors.alpha
 
 
-class AutoScalingLabel(var text: String, val skin: Skin, style: String = "default") : Widget()
+class AutoScalingLabel(var text: String, var maxLayoutHeight: Float, val skin: Skin, style: String = "default") : Widget()
 {
 	val labelStyle = skin.get(style, AutoScalingLabelStyle::class.java)
 	val fonts = Array<BitmapFont>()
@@ -27,6 +27,7 @@ class AutoScalingLabel(var text: String, val skin: Skin, style: String = "defaul
 		{
 			fonts.add(AssetManager.loadFont(labelStyle.fontFile, size, labelStyle.colour, labelStyle.borderWidth, labelStyle.borderColour, labelStyle.shadow))
 		}
+		chosenFont = fonts[3]
 	}
 
 	override fun layout()
@@ -36,8 +37,7 @@ class AutoScalingLabel(var text: String, val skin: Skin, style: String = "defaul
 		for (font in fonts)
 		{
 			layout.setText(font, text, Color.WHITE, width, Align.center, false)
-			val fontWidth = layout.width
-			if (fontWidth > width)
+			if (layout.width > width || layout.height > maxLayoutHeight)
 			{
 				break
 			}
