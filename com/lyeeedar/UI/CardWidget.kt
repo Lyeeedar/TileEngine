@@ -485,7 +485,7 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 			return createCardTable(desc.title, desc.type, desc.titleIcon, desc.content, desc.descriptors)
 		}
 
-		fun createCardTable(title: String, type: String, typeIcon: TextureRegion?, content: Table, descriptors: Array<Pair<Sprite, String?>>? = null): Table
+		fun createCardTable(title: String, type: String, typeIcon: Sprite?, content: Table, descriptors: Array<Pair<Sprite, String?>>? = null): Table
 		{
 			val table = Table()
 
@@ -500,24 +500,29 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 			table.add(content).pad(10f).grow()
 			table.row()
 
-			val circlesTableElevation = if (descriptors.size > 0) 30f else 0f
+			val circlesTableElevation = if (descriptors != null && descriptors.size > 0) 30f else 0f
 			val circlesTables = Table()
-			for (circleDesc in desc.descriptors)
+			if (descriptors != null)
 			{
-				val circle = SpriteWidget(cardCircle)
-				val icon = SpriteWidget(circleDesc.first.copy())
-				icon.drawable.drawActualSize = false
-
-				val stack = Stack()
-				stack.add(circle)
-				stack.add(icon)
-
-				if (circleDesc.second != null)
+				circlesTables.add(Table()).growX()
+				for (circleDesc in descriptors)
 				{
-					stack.addTapToolTip(circleDesc.second!!)
-				}
+					val circle = SpriteWidget(cardCircle)
+					val icon = SpriteWidget(circleDesc.first.copy())
+					icon.drawable.drawActualSize = false
 
-				circlesTables.add(stack).expandX().center().height(40f).padBottom(circlesTableElevation)
+					val stack = Stack()
+					stack.add(circle)
+					stack.add(icon)
+
+					if (circleDesc.second != null)
+					{
+						stack.addTapToolTip(circleDesc.second!!)
+					}
+
+					circlesTables.add(stack).pad(0f, 5f, 0f, 5f).center().height(40f).padBottom(circlesTableElevation)
+				}
+				circlesTables.add(Table()).growX()
 			}
 
 			val bottomStack = Stack()
@@ -557,18 +562,24 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 			return table
 		}
 
-		fun createCard(title: String, type: String, typeIcon: TextureRegion, smallContent: Table, detailContent: Table, data: Any? = null, colour: Colour = Colour.WHITE)
+		fun createCard(title: String, type: String, typeIcon: Sprite, smallContent: Table, detailContent: Table, data: Any? = null, colour: Colour = Colour.WHITE): CardWidget
 		{
 			return CardWidget(
 					createCardTable(title, type, typeIcon, smallContent, null),
 					createCardTable(title, type, typeIcon, detailContent, null),
-					typeIcon,
+					typeIcon.textures[0],
 					data,
 					colour)
 		}
 
 		fun createCard(title: String, type: String, icon: Sprite, detailContent: Table, typeIcon: TextureRegion, data: Any? = null, colour: Colour = Colour.WHITE, topText: String? = null, descriptors: Array<Pair<Sprite, String?>>? = null): CardWidget
 		{
+			var descriptors = descriptors
+			if (descriptors == null)
+			{
+				descriptors = gdxArrayOf( Pair(icon.copy(), null))
+			}
+
 			return CardWidget(
 					CardWidget.createFrontTable(
 							FrontTableSimple(title, type, icon.copy(), Sprite(typeIcon), topText)),
@@ -577,15 +588,15 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 									type,
 									detailContent,
 									Sprite(typeIcon),
-									descriptors ?: gdxArrayOf( Pair(icon.copy(), null)))),
+									descriptors)),
 					typeIcon,
 					data,
 					colour)
 		}
 
-		fun createCard(desc: FrontTableComplex, data: Any? = null, colour: Colour = Colour.WHITE)
+		fun createCard(desc: FrontTableComplex, data: Any? = null, colour: Colour = Colour.WHITE): CardWidget
 		{
-			return CardWidget(createFrontTable(desc), createFrontTable(desc), desc.titleIcon!!, data, colour)
+			return CardWidget(createFrontTable(desc), createFrontTable(desc), desc.titleIcon!!.textures[0], data, colour)
 		}
 
 		fun layoutCard(card: CardWidget, enterFrom: Direction, dstWidget: Table? = null, animate: Boolean = true)

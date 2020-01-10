@@ -33,7 +33,7 @@ class AutoScalingLabel(var text: String, var maxLayoutHeight: Float, val skin: S
 	override fun layout()
 	{
 		super.layout()
-		
+
 		for (font in fonts)
 		{
 			layout.setText(font, text, Color.WHITE, width, Align.center, false)
