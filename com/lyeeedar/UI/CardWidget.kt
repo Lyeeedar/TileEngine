@@ -413,7 +413,7 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 		// Background
 		background.touchable = Touchable.enabled
 		background.setFillParent(true)
-		background.background = TextureRegionDrawable(AssetManager.loadTextureRegion("white")).tint(Color(0f, 0f, 0f, 0.5f))
+		background.background = TextureRegionDrawable(AssetManager.loadTextureRegion("white")).tint(Color(0f, 0f, 0f, 0.8f))
 		background.addClickListener {
 			table.addAction(collapseSequence)
 			background.addAction(fadeOut(speed))
@@ -464,6 +464,14 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 		fun createFrontTable(desc: FrontTableSimple): Table
 		{
 			val table = Table()
+
+			val typeTable = Table()
+			typeTable.alpha = 0.4f
+			val typeLabel = AutoScalingLabel(desc.type, 25f, Statics.skin, "card")
+
+			typeTable.add(typeLabel).growX().center()
+			table.add(typeTable).expandX().center().width(80f).height(25f)
+			table.row()
 
 			if (desc.topText != null)
 			{
@@ -524,6 +532,14 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 		{
 			val table = Table()
 
+			val typeTable = Table()
+			typeTable.alpha = 0.4f
+			val typeLabel = AutoScalingLabel(desc.type, 25f, Statics.skin, "card")
+
+			typeTable.add(typeLabel).growX().center()
+			table.add(typeTable).expandX().center().width(80f).height(25f)
+			table.row()
+
 			table.add(desc.content).pad(10f).grow()
 			table.row()
 
@@ -533,6 +549,7 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 			{
 				val circle = SpriteWidget(cardCircle)
 				val icon = SpriteWidget(circleDesc.first.copy())
+				icon.drawable.drawActualSize = false
 
 				val stack = Stack()
 				stack.add(circle)
@@ -1001,6 +1018,6 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 	}
 }
 
-class FrontTableSimple(val title: String, val image: Sprite, var titleIcon: Sprite? = null, var topText: String? = null)
+class FrontTableSimple(val title: String, val type: String, val image: Sprite, var titleIcon: Sprite? = null, var topText: String? = null)
 
-class FrontTableComplex(val title: String, val content: Table, var titleIcon: Sprite? = null, val descriptors: Array<Pair<Sprite, String?>> = Array())
+class FrontTableComplex(val title: String, val type: String, val content: Table, var titleIcon: Sprite? = null, val descriptors: Array<Pair<Sprite, String?>> = Array())

@@ -22,7 +22,7 @@ class AutoScalingLabel(var text: String, var maxLayoutHeight: Float, val skin: S
 
 	init
 	{
-		val sizes = intArrayOf(2, 4, 6, 8, 12, 16, 20, 24, 30, 40)
+		val sizes = intArrayOf(2, 4, 6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 20, 22, 24, 30, 40)
 		for (size in sizes)
 		{
 			fonts.add(AssetManager.loadFont(labelStyle.fontFile, size, labelStyle.colour, labelStyle.borderWidth, labelStyle.borderColour, labelStyle.shadow))
@@ -33,6 +33,8 @@ class AutoScalingLabel(var text: String, var maxLayoutHeight: Float, val skin: S
 	override fun layout()
 	{
 		super.layout()
+
+		println("Auto scale: width $width  height $height")
 
 		for (font in fonts)
 		{
