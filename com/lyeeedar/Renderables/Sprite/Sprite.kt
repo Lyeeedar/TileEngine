@@ -36,7 +36,7 @@ class Sprite(val fileName: String, var animationDelay: Float, var textures: Arra
 
 	var tempCol = Colour()
 	var oldCol = Colour()
-	var colour = Colour(1f,1f,1f,1f)
+
 	var colourAnimation: AbstractColourAnimation? = null
 
 	var repeatDelay = 0f

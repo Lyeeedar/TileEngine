@@ -69,8 +69,6 @@ class ParticleEffect(val description: ParticleEffectDescription) : Renderable()
 {
 	private lateinit var loadPath: String
 
-	var colour: Colour = Colour(Color.WHITE)
-
 	var loop = true
 	var completed = false
 	var killOnAnimComplete = false

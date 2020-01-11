@@ -3,11 +3,14 @@ package com.lyeeedar.Renderables
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.Vector2
 import com.lyeeedar.Renderables.Animation.*
+import com.lyeeedar.Util.Colour
 
 
 abstract class Renderable
 {
 	var batchID: Int = 0
+
+	var colour = Colour(1f,1f,1f,1f)
 
 	var visible = true
 	var renderDelay = -1f
