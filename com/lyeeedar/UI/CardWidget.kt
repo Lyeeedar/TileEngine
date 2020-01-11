@@ -535,7 +535,7 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 
 			fun addTitleIcons(left: Boolean) {
 				if (typeIcon != null) {
-					val circle = SpriteWidget(cardCircle).tint(Color(1f, 1f, 1f, 0.25f))
+					val circle = SpriteWidget(cardCircle).tint(Color(1f, 1f, 1f, 0.2f))
 					val icon = SpriteWidget(typeIcon.copy()).tint(Color(1f, 1f, 1f, 0.35f))
 
 					val stack = Stack()
@@ -543,9 +543,9 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 					stack.add(icon)
 
 					if (left) {
-						titleIconsTable.add(stack).size(30f).expandX().pad(5f).left().padTop(circlesTableElevation + 5f)
+						titleIconsTable.add(stack).size(15f).expandX().pad(3f).left().padTop(circlesTableElevation + 3f)
 					} else {
-						titleIconsTable.add(stack).size(30f).expandX().pad(5f).right().padTop(circlesTableElevation + 5f)
+						titleIconsTable.add(stack).size(15f).expandX().pad(3f).right().padTop(circlesTableElevation + 3f)
 					}
 				}
 			}
