@@ -9,6 +9,8 @@ fun Entity.markedForDeletion(): MarkedForDeletionComponent? = MarkedForDeletionC
 fun Entity.isMarkedForDeletion() = this.markedForDeletion() != null
 class MarkedForDeletionComponent : AbstractComponent()
 {
+	var deletionEffectDelay: Float = 0f
+
 	override fun parse(xml: XmlData, entity: Entity, parentPath: String)
 	{
 
@@ -34,9 +36,16 @@ class MarkedForDeletionComponent : AbstractComponent()
 
 			if (obj.obtained) throw RuntimeException()
 
+			obj.reset()
+
 			obj.obtained = true
 			return obj
 		}
 	}
 	override fun free() { if (obtained) { MarkedForDeletionComponent.pool.free(this); obtained = false } }
+
+	override fun reset()
+	{
+		deletionEffectDelay = 0f
+	}
 }
