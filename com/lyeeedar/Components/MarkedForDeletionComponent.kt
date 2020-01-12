@@ -16,6 +16,12 @@ class MarkedForDeletionComponent : AbstractComponent()
 
 	}
 
+	fun set(delay: Float): MarkedForDeletionComponent
+	{
+		deletionEffectDelay = delay
+		return this
+	}
+
 	var obtained: Boolean = false
 	companion object
 	{

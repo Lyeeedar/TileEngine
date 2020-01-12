@@ -14,6 +14,8 @@ import com.lyeeedar.Util.XmlData
 import com.lyeeedar.Util.round
 import ktx.collections.set
 
+fun Entity.sprite(): Sprite? = this.renderable().renderable as? Sprite
+
 fun Entity.renderable(): RenderableComponent = renderableOrNull()!!
 fun Entity.renderableOrNull(): RenderableComponent? = RenderableComponent.mapper.get(this)
 fun Entity.renderOffset() = this.renderableOrNull()?.renderable?.animation?.renderOffset(false)
