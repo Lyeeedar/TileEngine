@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Scaling
 import com.badlogic.gdx.utils.viewport.ScalingViewport
+import com.lyeeedar.DEBUG_SCREEN_OVERRIDE
 import com.lyeeedar.Game.Save
 import com.lyeeedar.UI.DebugConsole
 import com.lyeeedar.UI.Tutorial
@@ -18,7 +19,6 @@ import com.lyeeedar.Util.Future
 import com.lyeeedar.Util.KeyMapping
 import com.lyeeedar.Util.KeySource
 import com.lyeeedar.Util.Statics
-import com.lyeeedar.DEBUG_SCREEN_OVERRIDE
 import ktx.actors.setKeyboardFocus
 
 
@@ -106,22 +106,6 @@ abstract class AbstractScreen() : Screen, InputProcessor, GestureDetector.Gestur
 		doRender(delta)
 
 		stage.draw()
-
-		if (fadeAccumulator > 0f)
-		{
-			fadeAccumulator -= delta
-			var alpha = fadeAccumulator / fadeTime
-
-			if (fadeType == FadeType.IN)
-			{
-				alpha = 1f - alpha
-			}
-
-			fadeRenderer.begin(ShapeRenderer.ShapeType.Filled)
-			fadeRenderer.setColor(0f, 0f, 0f, alpha)
-			fadeRenderer.rect(-1f, -1f, 2f, 2f) //full screen rect w/ identity matrix
-			fadeRenderer.end()
-		}
 
 		val end = System.nanoTime()
 
