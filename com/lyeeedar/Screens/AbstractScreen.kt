@@ -4,7 +4,6 @@ import com.badlogic.gdx.*
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.input.GestureDetector
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Stage
@@ -37,22 +36,6 @@ abstract class AbstractScreen() : Screen, InputProcessor, GestureDetector.Gestur
 	//endregion
 	//############################################################################
 	//region Screen
-
-	// ----------------------------------------------------------------------
-	fun fadeOutTransition(time: Float)
-	{
-		//fadeTime = time
-		//fadeAccumulator = time
-		//fadeType = FadeType.OUT
-	}
-
-	// ----------------------------------------------------------------------
-	fun fadeInTransition(time: Float)
-	{
-		//fadeTime = time
-		//fadeAccumulator = time
-		//fadeType = FadeType.IN
-	}
 
 	// ----------------------------------------------------------------------
 	fun swapTo()
@@ -343,11 +326,6 @@ abstract class AbstractScreen() : Screen, InputProcessor, GestureDetector.Gestur
 	lateinit var font: BitmapFont
 
 	var debugAccumulator: Float = 0f
-
-	private var fadeAccumulator: Float = 0f
-	private var fadeTime: Float = 0f
-	private var fadeType: FadeType = FadeType.IN
-	private val fadeRenderer: ShapeRenderer = ShapeRenderer(8)
 
 	val debugConsoleTable = Table()
 	lateinit var debugConsole: DebugConsole
