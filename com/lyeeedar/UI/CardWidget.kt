@@ -240,6 +240,8 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 
 		if (animating) return
 
+		val stage = stage ?: Statics.stage
+
 		val nextTable = if (faceup) backTable else frontTable
 		val flipFun = fun () {
 			this.flipFun?.invoke()
@@ -285,6 +287,8 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 	{
 		if (fullscreen) { return }
 		fullscreen = true
+
+		val stage = stage ?: Statics.stage
 
 		val table = Table()
 		val background = Table()
@@ -421,8 +425,8 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 		background.alpha = 0f
 		background.addAction(fadeIn(speed))
 
-		Statics.stage.addActor(background)
-		Statics.stage.addActor(table)
+		stage.addActor(background)
+		stage.addActor(table)
 	}
 
 	enum class DissolveType
@@ -433,6 +437,8 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 	}
 	fun dissolve(type: DissolveType, duration: Float, smoothness: Float)
 	{
+		val stage = stage ?: Statics.stage
+
 		val table = Table()
 		table.isTransform = true
 		table.originX = referenceWidth / 2
@@ -453,7 +459,7 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 		cardDissolve.setPosition(x, y)
 		cardDissolve.setSize(width, height)
 
-		Statics.stage.addActor(cardDissolve)
+		stage.addActor(cardDissolve)
 		remove()
 	}
 

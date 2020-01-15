@@ -6,7 +6,6 @@ import com.badlogic.gdx.Screen
 import com.lyeeedar.Game.Global
 import com.lyeeedar.Game.Save
 import com.lyeeedar.Screens.AbstractScreen
-import com.lyeeedar.Util.Future
 import com.lyeeedar.Util.Statics
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -125,15 +124,9 @@ class MainGame : Game()
 	{
 		if (currentScreen != null)
 		{
-			currentScreen!!.fadeOutTransition(0.2f)
-
-			Future.call(
-				{
-					val ascreen = screen as AbstractScreen
-					currentScreen = ascreen
-					super.setScreen(screen)
-					ascreen.fadeInTransition(0.2f)
-				}, 0.2f)
+			val ascreen = screen as AbstractScreen
+			currentScreen = ascreen
+			super.setScreen(screen)
 		}
 		else
 		{
