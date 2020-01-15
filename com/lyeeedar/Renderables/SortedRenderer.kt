@@ -603,6 +603,10 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 				}
 
 				sprite = rs.tilingSprite!!.getSprite(bitflag)
+				if (sprite.light != null)
+				{
+					addLight(sprite.light!!, rs.px + 0.5f, rs.py + 0.5f)
+				}
 			}
 
 			var texture = rs.texture?.texture
@@ -612,7 +616,7 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 				texture = sprite.currentTexture.texture
 			}
 
-			requestRender(rs.blend.src, rs.blend.dst, texture!!, { vertices: FloatArray, offset: Int ->
+			requestRender(rs.blend.src, rs.blend.dst, texture!!) { vertices: FloatArray, offset: Int ->
 				val localx = rs.x
 				val localy = rs.y
 				val localw = rs.width * tileSize
@@ -631,11 +635,11 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 				if (rs.texture != null)
 				{
 					doDraw(vertices, offset,
-													rs.texture!!, rs.nextTexture ?: rs.texture!!, colour,
-													localx, localy, 0.5f, 0.5f, 1f, 1f, localw * rs.scaleX, localh * rs.scaleY, rs.rotation, rs.flipX, rs.flipY,
-													0f, rs.blendAlpha, rs.alphaRef, rs.isLit, false)
+						   rs.texture!!, rs.nextTexture ?: rs.texture!!, colour,
+						   localx, localy, 0.5f, 0.5f, 1f, 1f, localw * rs.scaleX, localh * rs.scaleY, rs.rotation, rs.flipX, rs.flipY,
+						   0f, rs.blendAlpha, rs.alphaRef, rs.isLit, false)
 				}
-			} )
+			}
 		}
 	}
 
@@ -1031,7 +1035,7 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 	}
 
 	// ----------------------------------------------------------------------
-	fun queueSprite(sprite: Sprite, ix: Float, iy: Float, layer: Int, index: Int, colour: Colour = Colour.WHITE, width: Float = 1f, height: Float = 1f, scaleX: Float = 1f, scaleY: Float = 1f, lit: Boolean = true)
+	fun queueSprite(sprite: Sprite, ix: Float, iy: Float, layer: Int, index: Int, colour: Colour = Colour.WHITE, width: Float = 1f, height: Float = 1f, scaleX: Float = 1f, scaleY: Float = 1f, lit: Boolean = true, sortX: Int? = null, sortY: Int? = null)
 	{
 		if (!inBegin && !inStaticBegin) throw Exception("Queue called before begin!")
 
@@ -1105,7 +1109,7 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 		// check if onscreen
 		if (!alwaysOnscreen && !isSpriteOnscreen(sprite, x, y, width, height, scaleX, scaleY)) return
 
-		val comparisonVal = getComparisonVal(lx.toInt(), ly.toInt(), layer, index, BlendMode.MULTIPLICATIVE)
+		val comparisonVal = getComparisonVal(sortX ?: lx.toInt(), sortY ?: ly.toInt(), layer, index, BlendMode.MULTIPLICATIVE)
 
 		val rs = RenderSprite.obtain().set(sprite, null, null, x, y, ix, iy, colour, width, height, rotation, scaleX, scaleY, false, false, BlendMode.MULTIPLICATIVE, lit, comparisonVal)
 
