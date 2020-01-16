@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.esotericsoftware.kryo.Kryo
 import com.esotericsoftware.kryo.io.Input
 import com.esotericsoftware.kryo.io.Output
+import com.lyeeedar.Util.registerGameSerializers
 import com.lyeeedar.Util.registerGdxSerialisers
 import com.lyeeedar.Util.registerLyeeedarSerialisers
 
@@ -15,6 +16,7 @@ fun initKryo(): Kryo
 
 	kryo.registerGdxSerialisers()
 	kryo.registerLyeeedarSerialisers()
+	kryo.registerGameSerializers()
 
 	return kryo
 }

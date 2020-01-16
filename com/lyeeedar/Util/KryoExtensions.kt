@@ -9,6 +9,8 @@ import com.esotericsoftware.kryo.Serializer
 import com.esotericsoftware.kryo.io.Input
 import com.esotericsoftware.kryo.io.Output
 import com.kryo.FastEnumMapSerializer
+import com.lyeeedar.Renderables.Particle.ParticleEffect
+import com.lyeeedar.Renderables.Particle.ParticleEffectDescription
 import com.lyeeedar.Renderables.Sprite.Sprite
 import ktx.collections.set
 
@@ -43,6 +45,23 @@ fun Kryo.registerLyeeedarSerialisers()
 			kryo.writeObject(output, sprite.colour)
 			output.writeFloats(sprite.baseScale)
 			output.writeBoolean(sprite.drawActualSize)
+		}
+	})
+
+	kryo.register(ParticleEffect::class.java, object : Serializer<ParticleEffect>()
+	{
+		override fun read(kryo: Kryo, input: Input, type: Class<ParticleEffect>): ParticleEffect
+		{
+			val description = kryo.readClassAndObject(input) as ParticleEffectDescription
+			val particle = ParticleEffect(description)
+			particle.restore(kryo, input)
+			return particle
+		}
+
+		override fun write(kryo: Kryo, output: Output, particle: ParticleEffect)
+		{
+			kryo.writeClassAndObject(output, particle.description)
+			particle.store(kryo, output)
 		}
 	})
 
@@ -134,6 +153,19 @@ fun Kryo.registerLyeeedarSerialisers()
 		override fun write(kryo: Kryo, output: Output, xmlData: XmlData)
 		{
 			xmlData.save(output)
+		}
+	})
+
+	kryo.register(Settings::class.java, object : Serializer<Settings>()
+	{
+		override fun read(kryo: Kryo, input: Input, type: Class<Settings>): Settings
+		{
+			return Settings.load(kryo, input)
+		}
+
+		override fun write(kryo: Kryo, output: Output, settings: Settings)
+		{
+			settings.save(kryo, output)
 		}
 	})
 }

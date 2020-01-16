@@ -25,8 +25,9 @@ import ktx.collections.set
 
 class TextureOverride(val oldName: String, val newName: String, val blendMode: BlendMode?)
 
-class ParticleEffectDescription(val path: String)
+class ParticleEffectDescription()
 {
+	lateinit var path: String
 	var colour = Colour.WHITE.copy()
 	var flipX = false
 	var flipY = false
@@ -36,6 +37,11 @@ class ParticleEffectDescription(val path: String)
 	var killOnAnimComplete = false
 
 	val textureOverrides = Array<TextureOverride>()
+
+	constructor(path: String) : this()
+	{
+		this.path = path
+	}
 
 	fun getParticleEffect(): ParticleEffect
 	{
