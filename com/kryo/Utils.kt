@@ -39,6 +39,49 @@ fun serialize(obj: Any, path: String)
 	output.close()
 }
 
+fun serialize(obj: Any): ByteArray
+{
+	val output: Output
+	try
+	{
+		output = Output(128, -1)
+	}
+	catch (e: Exception)
+	{
+		e.printStackTrace()
+		throw e
+	}
+
+	kryo.writeClassAndObject(output, obj)
+
+	output.close()
+
+	return output.buffer
+}
+
+fun deserialize(byteArray: ByteArray): Any
+{
+	var input: Input? = null
+
+	val data: Any
+	try
+	{
+		input = Input(byteArray)
+		data = kryo.readClassAndObject(input)
+	}
+	catch (e: Exception)
+	{
+		e.printStackTrace()
+		throw e
+	}
+	finally
+	{
+		input?.close()
+	}
+
+	return data
+}
+
 fun deserialize(path: String): Any?
 {
 	var input: Input? = null
