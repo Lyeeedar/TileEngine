@@ -382,6 +382,11 @@ open class Point : Pool.Poolable, Comparable<Point>
 		return "" + x + ", " + y + " hashcode: " + hashCode()
 	}
 
+	fun toShortString(): String
+	{
+		return "$x,$y"
+	}
+
 	var storedHashCode: Int = 0
 	override fun hashCode(): Int
 	{
