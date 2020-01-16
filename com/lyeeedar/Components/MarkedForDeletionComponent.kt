@@ -10,6 +10,7 @@ fun Entity.isMarkedForDeletion() = this.markedForDeletion() != null
 class MarkedForDeletionComponent : AbstractComponent()
 {
 	var deletionEffectDelay: Float = 0f
+	var reason: String = ""
 
 	override fun parse(xml: XmlData, entity: Entity, parentPath: String)
 	{
@@ -36,13 +37,14 @@ class MarkedForDeletionComponent : AbstractComponent()
 
 		}
 
-		@JvmStatic fun obtain(): MarkedForDeletionComponent
+		@JvmStatic fun obtain(reason: String): MarkedForDeletionComponent
 		{
 			val obj = MarkedForDeletionComponent.pool.obtain()
 
 			if (obj.obtained) throw RuntimeException()
 
 			obj.reset()
+			obj.reason = reason
 
 			obj.obtained = true
 			return obj

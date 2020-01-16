@@ -5,7 +5,8 @@ import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.utils.Pool
 import com.lyeeedar.Util.XmlData
 
-fun Entity.name(): NameComponent = NameComponent.mapper.get(this)
+fun Entity.name(): NameComponent = this.nameOrNull()!!
+fun Entity.nameOrNull(): NameComponent? = NameComponent.mapper.get(this)
 class NameComponent() : AbstractComponent()
 {
 	lateinit var name: String
