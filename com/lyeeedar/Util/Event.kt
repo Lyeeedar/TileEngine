@@ -35,6 +35,11 @@ class Event0Arg {
 
 		invoking = false
 	}
+
+	fun clear()
+	{
+		handlers.clear()
+	}
 }
 
 class Event1Arg<T> {
@@ -66,6 +71,11 @@ class Event1Arg<T> {
 
 		invoking = false
 	}
+
+	fun clear()
+	{
+		handlers.clear()
+	}
 }
 
 class Event2Arg<T1, T2> {
@@ -96,5 +106,10 @@ class Event2Arg<T1, T2> {
 		}
 
 		invoking = false
+	}
+
+	fun clear()
+	{
+		handlers.clear()
 	}
 }
