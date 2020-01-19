@@ -46,6 +46,8 @@ abstract class AbstractScreen() : Screen, InputProcessor, GestureDetector.Gestur
 	// ----------------------------------------------------------------------
 	override fun show()
 	{
+		Statics.crashReporter.logDebug("Switching to screen $this")
+
 		if ( !created )
 		{
 			baseCreate()
@@ -58,6 +60,8 @@ abstract class AbstractScreen() : Screen, InputProcessor, GestureDetector.Gestur
 		{
 			Save.save()
 		}
+
+		Statics.crashReporter.logDebug("Finished switching to screen $this")
 	}
 
 	// ----------------------------------------------------------------------
