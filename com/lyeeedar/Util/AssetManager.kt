@@ -203,7 +203,7 @@ class AssetManager
 					val texName = overrideEl.get("Name")
 					val overrideName = overrideEl.getChildByName("Texture")!!.get("File")
 					val blendModeStr = overrideEl.get("BlendMode", "Current")!!
-					val blendMode = if (blendModeStr != "Current") BlendMode.valueOf(blendModeStr.toUpperCase()) else null
+					val blendMode = if (blendModeStr != "Current") BlendMode.valueOf(blendModeStr.toUpperCase(Locale.ENGLISH)) else null
 
 					effect.textureOverrides.add(TextureOverride(texName, overrideName, blendMode))
 				}
@@ -478,7 +478,7 @@ class AssetManager
 			for (i in 0 until anims.childCount)
 			{
 				val el = anims.getChild(i)
-				val name = el.get("Name").toLowerCase()
+				val name = el.get("Name").toLowerCase(Locale.ENGLISH)
 				val up = AssetManager.loadSprite(el.getChildByName("Up")!!)
 				val down = AssetManager.loadSprite(el.getChildByName("Down")!!)
 
@@ -496,7 +496,7 @@ class AssetManager
 
 		fun loadRenderable(xml:XmlData): Renderable
 		{
-			val type = xml.getAttribute("meta:RefKey", null)?.toUpperCase() ?: xml.name.toUpperCase()
+			val type = xml.getAttribute("meta:RefKey", null)?.toUpperCase(Locale.ENGLISH) ?: xml.name.toUpperCase(Locale.ENGLISH)
 
 			return when(type)
 			{

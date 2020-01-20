@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.reflect.ClassReflection
 import com.lyeeedar.Util.Colour
 import com.lyeeedar.Util.UnsmoothedPath
 import com.lyeeedar.Util.XmlData
+import java.util.*
 
 abstract class AbstractAnimation
 {
@@ -33,7 +34,7 @@ abstract class AbstractAnimation
 	{
 		fun load(xml:XmlData): AbstractAnimation
 		{
-			val uname = xml.name.toUpperCase()
+			val uname = xml.name.toUpperCase(Locale.ENGLISH)
 			val c = getClass(uname)
 			val instance = ClassReflection.getConstructor(c).newInstance() as AbstractAnimation
 
@@ -69,7 +70,7 @@ abstract class AbstractAnimationDefinition
 	{
 		fun load(xmlData: XmlData): AbstractAnimationDefinition
 		{
-			val def = when(xmlData.getAttribute("meta:RefKey").toUpperCase())
+			val def = when(xmlData.getAttribute("meta:RefKey").toUpperCase(Locale.ENGLISH))
 			{
 				"MOVEANIMATION" -> MoveAnimationDefinition()
 				"LEAPANIMATION" -> LeapAnimationDefinition()

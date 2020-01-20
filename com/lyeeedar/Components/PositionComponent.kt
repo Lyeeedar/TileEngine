@@ -8,6 +8,7 @@ import com.lyeeedar.Direction
 import com.lyeeedar.SpaceSlot
 import com.lyeeedar.Util.Point
 import com.lyeeedar.Util.XmlData
+import java.util.*
 
 fun Entity.pos(): PositionComponent = posOrNull()!!
 fun Entity.posOrNull(): PositionComponent? = PositionComponent.mapper.get(this)
@@ -56,7 +57,7 @@ class PositionComponent(): AbstractComponent()
 	override fun parse(xml: XmlData, entity: Entity, parentPath: String)
 	{
 		val slotEl = xml.get("SpaceSlot", null)
-		if (slotEl != null) slot = SpaceSlot.valueOf(slotEl.toUpperCase())
+		if (slotEl != null) slot = SpaceSlot.valueOf(slotEl.toUpperCase(Locale.ENGLISH))
 
 		canFall = xml.getBoolean("CanFall", true)
 		moveable = xml.getBoolean("Moveable", true)

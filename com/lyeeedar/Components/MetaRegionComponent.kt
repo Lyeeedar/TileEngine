@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.Pool
 import com.lyeeedar.Util.XmlData
 import ktx.collections.addAll
+import java.util.*
 
 fun Entity.metaRegion(): MetaRegionComponent? = MetaRegionComponent.mapper.get(this)
 class MetaRegionComponent :  AbstractComponent()
@@ -14,7 +15,7 @@ class MetaRegionComponent :  AbstractComponent()
 
 	override fun parse(xml: XmlData, entity: Entity, parentPath: String)
 	{
-		keys.addAll(xml.get("Key").toLowerCase().split(','))
+		keys.addAll(xml.get("Key").toLowerCase(Locale.ENGLISH).split(','))
 	}
 
 	var obtained: Boolean = false

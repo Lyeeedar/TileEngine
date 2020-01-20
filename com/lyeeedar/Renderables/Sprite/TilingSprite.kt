@@ -9,6 +9,7 @@ import com.lyeeedar.Renderables.Renderable
 import com.lyeeedar.Util.AssetManager
 import com.lyeeedar.Util.EnumBitflag
 import com.lyeeedar.Util.XmlData
+import java.util.*
 
 // Naming priority: NSEW
 class TilingSprite() : Renderable()
@@ -91,7 +92,7 @@ class TilingSprite() : Renderable()
 		{
 			for (el in directionsEl.children())
 			{
-				val dir = Direction.valueOf(el.name.toUpperCase())
+				val dir = Direction.valueOf(el.name.toUpperCase(Locale.ENGLISH))
 				val sprite = AssetManager.loadSprite(el)
 
 				val bitflag = when (dir)
@@ -125,8 +126,8 @@ class TilingSprite() : Renderable()
 
 	fun load(thisName: String, checkName: String, texName: String?, maskName: String, spriteElement:XmlData)
 	{
-		this.thisID = thisName.toLowerCase().hashCode().toLong()
-		this.checkID = checkName.toLowerCase().hashCode().toLong()
+		this.thisID = thisName.toLowerCase(Locale.ENGLISH).hashCode().toLong()
+		this.checkID = checkName.toLowerCase(Locale.ENGLISH).hashCode().toLong()
 		this.texName = texName
 		this.maskName = maskName
 		this.spriteBase = spriteElement

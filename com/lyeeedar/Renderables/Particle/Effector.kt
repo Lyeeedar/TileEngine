@@ -9,6 +9,7 @@ import com.esotericsoftware.kryo.io.Output
 import com.lyeeedar.Util.XmlData
 import com.lyeeedar.Util.doesLineIntersectCircle
 import com.lyeeedar.Util.lerp
+import java.util.*
 
 class EffectorKeyframe(
 	val time: Float = 0f,
@@ -189,7 +190,7 @@ class Effector(val emitter: Emitter)
 		fun load(xmlData: XmlData, emitter: Emitter): Effector
 		{
 			val effector = Effector(emitter)
-			effector.type = EffectorType.valueOf(xmlData.get("Type", "Point")!!.toUpperCase())
+			effector.type = EffectorType.valueOf(xmlData.get("Type", "Point")!!.toUpperCase(Locale.ENGLISH))
 
 			// load timelines
 			val offset = VectorTimeline()

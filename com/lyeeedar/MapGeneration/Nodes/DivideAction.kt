@@ -8,6 +8,7 @@ import com.lyeeedar.MapGeneration.MapGenerator
 import com.lyeeedar.MapGeneration.MapGeneratorNode
 import com.lyeeedar.Util.XmlData
 import com.lyeeedar.Util.floor
+import java.util.*
 
 class DivideAction(generator: MapGenerator) : AbstractMapGenerationAction(generator)
 {
@@ -57,7 +58,7 @@ class DivideAction(generator: MapGenerator) : AbstractMapGenerationAction(genera
 
 		for (el in xmlData.children())
 		{
-			val size = el.get("Size").toLowerCase().replace("%", "#size")
+			val size = el.get("Size").toLowerCase(Locale.ENGLISH).replace("%", "#size")
 			val child = el.get("Node", "")!!
 			val exp = if (size == "remainder") null else CompiledExpression(size, Area.defaultVariables)
 

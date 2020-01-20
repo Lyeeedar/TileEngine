@@ -5,6 +5,7 @@ import com.badlogic.gdx.utils.ObjectMap
 import com.lyeeedar.Renderables.Renderable
 import com.lyeeedar.Util.directory
 import com.lyeeedar.Util.getXml
+import java.util.*
 
 class EntityLoader()
 {
@@ -27,15 +28,15 @@ class EntityLoader()
 				if (skipRenderables)
 				{
 					if (
-						componentEl.name.toUpperCase() == "ADDITIONALRENDERABLES" ||
-						componentEl.name.toUpperCase() == "DIRECTIONALSPRITE" ||
-						componentEl.name.toUpperCase() == "RENDERABLE")
+						componentEl.name.toUpperCase(Locale.ENGLISH) == "ADDITIONALRENDERABLES" ||
+						componentEl.name.toUpperCase(Locale.ENGLISH) == "DIRECTIONALSPRITE" ||
+						componentEl.name.toUpperCase(Locale.ENGLISH) == "RENDERABLE")
 					{
 						continue
 					}
 				}
 
-				val component: AbstractComponent = when(componentEl.name.toUpperCase())
+				val component: AbstractComponent = when(componentEl.name.toUpperCase(Locale.ENGLISH))
 				{
 					"ADDITIONALRENDERABLES" -> AdditionalRenderableComponent.obtain()
 					"DIRECTIONALSPRITE" -> DirectionalSpriteComponent.obtain()
@@ -46,7 +47,7 @@ class EntityLoader()
 					"RENDERABLE" -> RenderableComponent.obtain()
 
 					else -> {
-						val comp = loadGameComponents(componentEl.name.toUpperCase())
+						val comp = loadGameComponents(componentEl.name.toUpperCase(Locale.ENGLISH))
 						comp ?: throw Exception("Unknown component '" + componentEl.name + "'")
 					}
 				}

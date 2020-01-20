@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.XmlReader
 import com.esotericsoftware.kryo.io.Input
 import com.esotericsoftware.kryo.io.Output
 import ktx.collections.set
+import java.util.*
 
 class XmlData
 {
@@ -38,7 +39,7 @@ class XmlData
 	constructor(name: String, data: String)
 	{
 		this.name = name
-		this.nameId = name.toUpperCase().hashCode()
+		this.nameId = name.toUpperCase(Locale.ENGLISH).hashCode()
 		this.value = data
 	}
 
@@ -48,12 +49,12 @@ class XmlData
 
 	fun getChildByName(name: String): XmlData?
 	{
-		return getChildById(name.toUpperCase().hashCode())
+		return getChildById(name.toUpperCase(Locale.ENGLISH).hashCode())
 	}
 
 	fun getChildrenByName(name: String): Sequence<XmlData>
 	{
-		val id = name.toUpperCase().hashCode()
+		val id = name.toUpperCase(Locale.ENGLISH).hashCode()
 		return sequence {
 			for (child in children)
 			{
@@ -152,42 +153,42 @@ class XmlData
 
 	fun getAttribute(name: String): String
 	{
-		return attributeMap[name.toUpperCase().hashCode()]?.text() ?: throw GdxRuntimeException("Element ${this.name} has no attribute called $name!")
+		return attributeMap[name.toUpperCase(Locale.ENGLISH).hashCode()]?.text() ?: throw GdxRuntimeException("Element ${this.name} has no attribute called $name!")
 	}
 
 	fun getAttribute(name: String, fallback: String?): String?
 	{
-		return attributeMap[name.toUpperCase().hashCode()]?.text() ?: fallback
+		return attributeMap[name.toUpperCase(Locale.ENGLISH).hashCode()]?.text() ?: fallback
 	}
 
 	fun getIntAttribute(name: String): Int
 	{
-		return attributeMap[name.toUpperCase().hashCode()]?.int() ?: throw GdxRuntimeException("Element ${this.name} has no attribute called $name!")
+		return attributeMap[name.toUpperCase(Locale.ENGLISH).hashCode()]?.int() ?: throw GdxRuntimeException("Element ${this.name} has no attribute called $name!")
 	}
 
 	fun getIntAttribute(name: String, fallback: Int): Int
 	{
-		return attributeMap[name.toUpperCase().hashCode()]?.int() ?: fallback
+		return attributeMap[name.toUpperCase(Locale.ENGLISH).hashCode()]?.int() ?: fallback
 	}
 
 	fun getFloatAttribute(name: String): Float
 	{
-		return attributeMap[name.toUpperCase().hashCode()]?.float() ?: throw GdxRuntimeException("Element ${this.name} has no attribute called $name!")
+		return attributeMap[name.toUpperCase(Locale.ENGLISH).hashCode()]?.float() ?: throw GdxRuntimeException("Element ${this.name} has no attribute called $name!")
 	}
 
 	fun getFloatAttribute(name: String, fallback: Float): Float
 	{
-		return attributeMap[name.toUpperCase().hashCode()]?.float() ?: fallback
+		return attributeMap[name.toUpperCase(Locale.ENGLISH).hashCode()]?.float() ?: fallback
 	}
 
 	fun getBooleanAttribute(name: String): Boolean
 	{
-		return attributeMap[name.toUpperCase().hashCode()]?.boolean() ?: throw GdxRuntimeException("Element ${this.name} has no attribute called $name!")
+		return attributeMap[name.toUpperCase(Locale.ENGLISH).hashCode()]?.boolean() ?: throw GdxRuntimeException("Element ${this.name} has no attribute called $name!")
 	}
 
 	fun getBooleanAttribute(name: String, fallback: Boolean): Boolean
 	{
-		return attributeMap[name.toUpperCase().hashCode()]?.boolean() ?: fallback
+		return attributeMap[name.toUpperCase(Locale.ENGLISH).hashCode()]?.boolean() ?: fallback
 	}
 
 	fun set(name: String, value: Any)
@@ -302,7 +303,7 @@ class XmlData
 	fun load(input: Input)
 	{
 		name = input.readString()
-		nameId = name.toUpperCase().hashCode()
+		nameId = name.toUpperCase(Locale.ENGLISH).hashCode()
 
 		val childCount = input.readInt(true)
 		children = Array(childCount){ e -> XmlData() }
@@ -378,7 +379,7 @@ class XmlData
 		{
 			val data = XmlData()
 			data.name = el.name
-			data.nameId = data.name.toUpperCase().hashCode()
+			data.nameId = data.name.toUpperCase(Locale.ENGLISH).hashCode()
 
 			if (el.childCount == 0 && el.text == null)
 			{
@@ -400,7 +401,7 @@ class XmlData
 					}
 					else
 					{
-						val boolVal = when (el.text.toLowerCase())
+						val boolVal = when (el.text.toLowerCase(Locale.ENGLISH))
 						{
 							"true" -> true
 							"false" -> false
@@ -584,7 +585,7 @@ class XmlAttributeData
 	fun load(input: Input)
 	{
 		name = input.readString()
-		nameId = name.toUpperCase().hashCode()
+		nameId = name.toUpperCase(Locale.ENGLISH).hashCode()
 
 		val valueType = input.readShort().toInt()
 		value = when(valueType)
@@ -603,7 +604,7 @@ class XmlAttributeData
 		{
 			val data = XmlAttributeData()
 			data.name = name
-			data.nameId = name.toUpperCase().hashCode()
+			data.nameId = name.toUpperCase(Locale.ENGLISH).hashCode()
 
 			val floatVal = rawvalue.toFloatOrNull()
 			if (floatVal != null)
@@ -619,7 +620,7 @@ class XmlAttributeData
 				}
 				else
 				{
-					val boolVal = when (rawvalue.toLowerCase())
+					val boolVal = when (rawvalue.toLowerCase(Locale.ENGLISH))
 					{
 						"true" -> true
 						"false" -> false

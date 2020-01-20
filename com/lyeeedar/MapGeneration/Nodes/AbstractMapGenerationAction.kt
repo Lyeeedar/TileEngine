@@ -7,6 +7,7 @@ import com.lyeeedar.MapGeneration.MapGenerator
 import com.lyeeedar.MapGeneration.Symbol
 import com.lyeeedar.Util.XmlData
 import com.lyeeedar.Util.copy
+import java.util.*
 
 abstract class AbstractMapGenerationAction(val generator: MapGenerator)
 {
@@ -18,7 +19,7 @@ abstract class AbstractMapGenerationAction(val generator: MapGenerator)
 	{
 		fun load(xmlData: XmlData, generator: MapGenerator): AbstractMapGenerationAction
 		{
-			val refKey = xmlData.name.toUpperCase()
+			val refKey = xmlData.name.toUpperCase(Locale.ENGLISH)
 			val action = when(refKey)
 			{
 				"CONDITION" -> ConditionAction(generator)

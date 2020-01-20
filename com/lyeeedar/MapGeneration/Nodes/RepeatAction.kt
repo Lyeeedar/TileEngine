@@ -8,6 +8,7 @@ import com.lyeeedar.MapGeneration.MapGenerator
 import com.lyeeedar.MapGeneration.MapGeneratorNode
 import com.lyeeedar.Util.XmlData
 import com.lyeeedar.Util.floor
+import java.util.*
 
 class RepeatAction(generator: MapGenerator) : AbstractMapGenerationAction(generator)
 {
@@ -141,10 +142,10 @@ class RepeatAction(generator: MapGenerator) : AbstractMapGenerationAction(genera
 	override fun parse(xmlData: XmlData)
 	{
 		onX = xmlData.get("Axis", "X") == "X"
-		size = CompiledExpression(xmlData.get("Size").replace("%", "#size").toLowerCase(), Area.defaultVariables)
+		size = CompiledExpression(xmlData.get("Size").replace("%", "#size").toLowerCase(Locale.ENGLISH), Area.defaultVariables)
 		childGUID = xmlData.get("Node")
 		remainderGUID = xmlData.get("Remainder", "")!!
-		remainderMode = RemainderMode.valueOf(xmlData.get("RemainderMode", "Node")!!.toUpperCase())
+		remainderMode = RemainderMode.valueOf(xmlData.get("RemainderMode", "Node")!!.toUpperCase(Locale.ENGLISH))
 	}
 
 	override fun resolve()

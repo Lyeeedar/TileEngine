@@ -11,6 +11,7 @@ import com.lyeeedar.SpaceSlot
 import com.lyeeedar.Util.Point
 import com.lyeeedar.Util.XmlData
 import com.lyeeedar.Util.random
+import java.util.*
 
 class ConnectRoomsAction(generator: MapGenerator) : AbstractMapGenerationAction(generator)
 {
@@ -355,7 +356,7 @@ class ConnectRoomsAction(generator: MapGenerator) : AbstractMapGenerationAction(
 
 	override fun parse(xmlData: XmlData)
 	{
-		pathStyle = PathStyle.valueOf(xmlData.get("PathStyle", "Straight")!!.toUpperCase())
+		pathStyle = PathStyle.valueOf(xmlData.get("PathStyle", "Straight")!!.toUpperCase(Locale.ENGLISH))
 		width = xmlData.getInt("Width", 1)
 		roomName = xmlData.get("RoomName")
 
@@ -396,7 +397,7 @@ class CorridorFeature
 
 	fun parse(xmlData: XmlData)
 	{
-		placementMode = PlacementMode.valueOf(xmlData.get("PlacementMode", "Both")!!.toUpperCase())
+		placementMode = PlacementMode.valueOf(xmlData.get("PlacementMode", "Both")!!.toUpperCase(Locale.ENGLISH))
 		interval = xmlData.getInt("Interval", 0)
 		char = xmlData.get("Character")[0]
 	}

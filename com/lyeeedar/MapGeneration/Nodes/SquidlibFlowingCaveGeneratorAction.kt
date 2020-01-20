@@ -6,6 +6,7 @@ import squidpony.squidgrid.mapping.DungeonUtility
 import squidpony.squidgrid.mapping.FlowingCaveGenerator
 import squidpony.squidgrid.mapping.styled.TilesetType
 import squidpony.squidmath.RNG
+import java.util.*
 
 class SquidlibFlowingCaveGeneratorAction(generator: MapGenerator) : AbstractMapGenerationAction(generator)
 {
@@ -38,7 +39,7 @@ class SquidlibFlowingCaveGeneratorAction(generator: MapGenerator) : AbstractMapG
 
 	override fun parse(xmlData: XmlData)
 	{
-		tilesetType = TilesetType.valueOf(xmlData.get("TilesetType").toUpperCase())
+		tilesetType = TilesetType.valueOf(xmlData.get("TilesetType").toUpperCase(Locale.ENGLISH))
 		roomChance = xmlData.getFloat("RoomChance", 0f).toDouble()
 		overwrite = xmlData.getBoolean("Overwrite", true)
 	}

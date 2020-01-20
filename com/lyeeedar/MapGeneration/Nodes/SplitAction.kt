@@ -9,6 +9,7 @@ import com.lyeeedar.MapGeneration.MapGeneratorNode
 import com.lyeeedar.Util.XmlData
 import com.lyeeedar.Util.floor
 import com.lyeeedar.Util.round
+import java.util.*
 
 class SplitAction(generator: MapGenerator) : AbstractMapGenerationAction(generator)
 {
@@ -192,8 +193,8 @@ class SplitAction(generator: MapGenerator) : AbstractMapGenerationAction(generat
 	{
 		for (el in xmlData.children())
 		{
-			val side = SplitSide.valueOf(el.get("Side", "North")!!.toUpperCase())
-			val size = CompiledExpression(el.get("Size", "1")!!.toLowerCase().replace("%", "#size"), Area.defaultVariables)
+			val side = SplitSide.valueOf(el.get("Side", "North")!!.toUpperCase(Locale.ENGLISH))
+			val size = CompiledExpression(el.get("Size", "1")!!.toLowerCase(Locale.ENGLISH).replace("%", "#size"), Area.defaultVariables)
 			val child = el.get("Node")
 
 			splits.add(Split(side, size, child))

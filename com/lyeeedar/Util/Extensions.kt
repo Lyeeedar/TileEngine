@@ -3,12 +3,13 @@ package com.lyeeedar.Util
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Pool
+import java.util.*
 
 /**
  * Created by Philip on 04-Jul-16.
  */
 
-fun String.neaten() = this.substring(0, 1).toUpperCase() + this.substring(1).toLowerCase()
+fun String.neaten() = this.substring(0, 1).toUpperCase(Locale.ENGLISH) + this.substring(1).toLowerCase(Locale.ENGLISH)
 
 fun Char.isVowel(): Boolean
 {

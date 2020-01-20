@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.ObjectSet
 import com.lyeeedar.Util.AssetManager
 import com.lyeeedar.Util.XmlData
 import com.lyeeedar.Util.getXml
+import java.util.*
 
 class SoundInstance
 {
@@ -81,7 +82,7 @@ class SoundInstance
 			sound.rangeMax = xml.getInt("RangeMax")
 			sound.volume = xml.getFloat("Volume", sound.volume)
 			sound.pitch = xml.getFloat("Pitch", sound.pitch)
-			sound.function = Function.valueOf(xml.get("Function", "Linear")!!.toUpperCase())
+			sound.function = Function.valueOf(xml.get("Function", "Linear")!!.toUpperCase(Locale.ENGLISH))
 
 			return sound
 		}

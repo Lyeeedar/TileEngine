@@ -6,6 +6,7 @@ import squidpony.squidgrid.mapping.DungeonUtility
 import squidpony.squidgrid.mapping.SectionDungeonGenerator
 import squidpony.squidgrid.mapping.styled.TilesetType
 import squidpony.squidmath.RNG
+import java.util.*
 
 class SquidlibSectionGeneratorAction(generator: MapGenerator) : AbstractMapGenerationAction(generator)
 {
@@ -74,7 +75,7 @@ class SquidlibSectionGeneratorAction(generator: MapGenerator) : AbstractMapGener
 
 	override fun parse(xmlData: XmlData)
 	{
-		tilesetType = TilesetType.valueOf(xmlData.get("TilesetType").toUpperCase())
+		tilesetType = TilesetType.valueOf(xmlData.get("TilesetType").toUpperCase(Locale.ENGLISH))
 		lake = xmlData.getInt("PercentLake", 0)
 		maze = xmlData.getInt("PercentMaze", 0)
 		water = xmlData.getInt("PercentWater", 0)

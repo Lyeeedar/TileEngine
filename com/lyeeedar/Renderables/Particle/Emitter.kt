@@ -12,6 +12,7 @@ import com.lyeeedar.Util.Random
 import com.lyeeedar.Util.XmlData
 import com.lyeeedar.Util.ciel
 import com.lyeeedar.Util.lerp
+import java.util.*
 
 class FixedVector2(val x: Float, val y: Float)
 {
@@ -603,9 +604,9 @@ class Emitter(val particleEffect: ParticleEffect)
 
 			val emitter = Emitter(particleEffect)
 
-			emitter.type = EmissionType.valueOf(xml.get("Type", "Absolute")!!.toUpperCase())
-			emitter.simulationSpace = SimulationSpace.valueOf(xml.get("Space", "World")!!.toUpperCase())
-			emitter.shape = EmissionShape.valueOf(xml.get("Shape", "Box")!!.toUpperCase())
+			emitter.type = EmissionType.valueOf(xml.get("Type", "Absolute")!!.toUpperCase(Locale.ENGLISH))
+			emitter.simulationSpace = SimulationSpace.valueOf(xml.get("Space", "World")!!.toUpperCase(Locale.ENGLISH))
+			emitter.shape = EmissionShape.valueOf(xml.get("Shape", "Box")!!.toUpperCase(Locale.ENGLISH))
 
 			emitter.width = xml.getFloat("Width", 0f)
 			if (emitter.width == 0f && emitter.shape != EmissionShape.CONE) emitter.width = 0.001f
@@ -619,8 +620,8 @@ class Emitter(val particleEffect: ParticleEffect)
 			}
 
 			emitter.emitterRotation = xml.getFloat("Rotation", 0f)
-			emitter.area = EmissionArea.valueOf(xml.get("Area", "Interior")!!.toUpperCase())
-			emitter.dir = EmissionDirection.valueOf(xml.get("Direction", "Radial")!!.toUpperCase())
+			emitter.area = EmissionArea.valueOf(xml.get("Area", "Interior")!!.toUpperCase(Locale.ENGLISH))
+			emitter.dir = EmissionDirection.valueOf(xml.get("Direction", "Radial")!!.toUpperCase(Locale.ENGLISH))
 			emitter.particleSpeed = Range(xml.get("ParticleSpeed"))
 			emitter.particleRotation = Range(xml.get("ParticleRotation"))
 			emitter.gravity = xml.getFloat("Gravity", 0f)

@@ -8,6 +8,7 @@ import com.lyeeedar.MapGeneration.Symbol
 import com.lyeeedar.SpaceSlot
 import com.lyeeedar.Util.XmlData
 import ktx.collections.toGdxArray
+import java.util.*
 
 class FilterAction(generator: MapGenerator) : AbstractMapGenerationAction(generator)
 {
@@ -136,7 +137,7 @@ class FilterAction(generator: MapGenerator) : AbstractMapGenerationAction(genera
 
 	override fun parse(xmlData: XmlData)
 	{
-		mode = Mode.valueOf(xmlData.get("Mode", "Type")!!.toUpperCase())
+		mode = Mode.valueOf(xmlData.get("Mode", "Type")!!.toUpperCase(Locale.ENGLISH))
 
 		char = xmlData.get("Character", " ")!![0]
 		centerDist = xmlData.getInt("CenterDist", 2)

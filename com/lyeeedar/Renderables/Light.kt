@@ -2,7 +2,9 @@ package com.lyeeedar.Renderables
 
 import com.badlogic.gdx.math.Vector2
 import com.lyeeedar.Util.*
+import com.lyeeedar.Util.Random
 import squidpony.squidgrid.FOV
+import java.util.*
 
 // Could be encoded as
 // vec2 pos : 2x4 = 8 bytes
@@ -100,7 +102,7 @@ abstract class LightAnimation
 	{
 		fun load(xmlData: XmlData): LightAnimation
 		{
-			val anim = when(xmlData.getAttribute("meta:RefKey").toUpperCase())
+			val anim = when(xmlData.getAttribute("meta:RefKey").toUpperCase(Locale.ENGLISH))
 			{
 				"PULSELIGHTANIMATION" -> PulseLightAnimation()
 				else -> throw Exception("Unknown light animation type '" + xmlData.getAttribute("meta:RefKey") + "'!")

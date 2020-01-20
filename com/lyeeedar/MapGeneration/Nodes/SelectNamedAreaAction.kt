@@ -7,6 +7,7 @@ import com.lyeeedar.MapGeneration.MapGenerator
 import com.lyeeedar.MapGeneration.MapGeneratorNode
 import com.lyeeedar.MapGeneration.Pos
 import com.lyeeedar.Util.*
+import java.util.*
 
 class SelectNamedAreaAction(generator: MapGenerator) : AbstractMapGenerationAction(generator)
 {
@@ -127,8 +128,8 @@ class SelectNamedAreaAction(generator: MapGenerator) : AbstractMapGenerationActi
 
 	override fun parse(xmlData: XmlData)
 	{
-		mode = Mode.valueOf(xmlData.get("Mode", "Random")!!.toUpperCase())
-		countExp = CompiledExpression(xmlData.get("Count", "1")!!.toLowerCase().replace("%", "#count"), ObjectFloatMap(mapOf(Pair("count", 0f))))
+		mode = Mode.valueOf(xmlData.get("Mode", "Random")!!.toUpperCase(Locale.ENGLISH))
+		countExp = CompiledExpression(xmlData.get("Count", "1")!!.toLowerCase(Locale.ENGLISH).replace("%", "#count"), ObjectFloatMap(mapOf(Pair("count", 0f))))
 		name = xmlData.get("Name")
 
 		nodeGuid = xmlData.get("Node", "")!!

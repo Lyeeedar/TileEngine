@@ -5,6 +5,7 @@ import com.exp4j.Helpers.CompiledExpression
 import com.lyeeedar.MapGeneration.Area
 import com.lyeeedar.MapGeneration.MapGenerator
 import com.lyeeedar.Util.XmlData
+import java.util.*
 
 class RotateAction(generator: MapGenerator) : AbstractMapGenerationAction(generator)
 {
@@ -24,7 +25,7 @@ class RotateAction(generator: MapGenerator) : AbstractMapGenerationAction(genera
 
 	override fun parse(xmlData: XmlData)
 	{
-		degrees = CompiledExpression(xmlData.get("Degrees").toLowerCase(), Area.defaultVariables)
+		degrees = CompiledExpression(xmlData.get("Degrees").toLowerCase(Locale.ENGLISH), Area.defaultVariables)
 	}
 
 	override fun resolve()

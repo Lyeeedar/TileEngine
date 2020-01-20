@@ -6,6 +6,7 @@ import com.lyeeedar.Direction
 import com.lyeeedar.MapGeneration.Area
 import com.lyeeedar.MapGeneration.MapGenerator
 import com.lyeeedar.Util.XmlData
+import java.util.*
 
 class ScaleAction(generator: MapGenerator) : AbstractMapGenerationAction(generator)
 {
@@ -96,10 +97,10 @@ class ScaleAction(generator: MapGenerator) : AbstractMapGenerationAction(generat
 
 	override fun parse(xmlData: XmlData)
 	{
-		mode = Mode.valueOf(xmlData.get("Mode", "Additive")!!.toUpperCase())
-		xEqn = CompiledExpression(xmlData.get("X").toLowerCase().replace("%", "#size"), Area.defaultVariables)
-		yEqn = CompiledExpression(xmlData.get("Y").toLowerCase().replace("%", "#size"), Area.defaultVariables)
-		snap = Direction.valueOf(xmlData.get("Snap", "Center")!!.toUpperCase())
+		mode = Mode.valueOf(xmlData.get("Mode", "Additive")!!.toUpperCase(Locale.ENGLISH))
+		xEqn = CompiledExpression(xmlData.get("X").toLowerCase(Locale.ENGLISH).replace("%", "#size"), Area.defaultVariables)
+		yEqn = CompiledExpression(xmlData.get("Y").toLowerCase(Locale.ENGLISH).replace("%", "#size"), Area.defaultVariables)
+		snap = Direction.valueOf(xmlData.get("Snap", "Center")!!.toUpperCase(Locale.ENGLISH))
 	}
 
 	override fun resolve()

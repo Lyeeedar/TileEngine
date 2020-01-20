@@ -10,6 +10,7 @@ import com.lyeeedar.MapGeneration.Pos
 import com.lyeeedar.Util.XmlData
 import com.lyeeedar.Util.floor
 import com.lyeeedar.Util.removeRandom
+import java.util.*
 
 class TakeAction(generator: MapGenerator) : AbstractMapGenerationAction(generator)
 {
@@ -80,8 +81,8 @@ class TakeAction(generator: MapGenerator) : AbstractMapGenerationAction(generato
 
 	override fun parse(xmlData: XmlData)
 	{
-		mode = Mode.valueOf(xmlData.get("Mode", "Random")!!.toUpperCase())
-		countExp = CompiledExpression(xmlData.get("Count").toLowerCase().replace("%", "#count"), Area.defaultVariables)
+		mode = Mode.valueOf(xmlData.get("Mode", "Random")!!.toUpperCase(Locale.ENGLISH))
+		countExp = CompiledExpression(xmlData.get("Count").toLowerCase(Locale.ENGLISH).replace("%", "#count"), Area.defaultVariables)
 
 		nodeGuid = xmlData.get("Node", "")!!
 		remainderGuid = xmlData.get("Remainder", "")!!

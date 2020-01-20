@@ -6,6 +6,7 @@ import com.lyeeedar.MapGeneration.Area
 import com.lyeeedar.MapGeneration.MapGenerator
 import com.lyeeedar.Util.XmlData
 import com.lyeeedar.Util.set
+import java.util.*
 
 class DefineVariableAction(generator: MapGenerator) : AbstractMapGenerationAction(generator)
 {
@@ -27,7 +28,7 @@ class DefineVariableAction(generator: MapGenerator) : AbstractMapGenerationActio
 
 	override fun parse(xmlData: XmlData)
 	{
-		key = xmlData.get("Key").toLowerCase()
+		key = xmlData.get("Key").toLowerCase(Locale.ENGLISH)
 		valueExp = CompiledExpression(xmlData.get("Value"), Area.defaultVariables)
 
 		when (key)

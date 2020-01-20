@@ -8,6 +8,7 @@ import com.lyeeedar.MapGeneration.Area
 import com.lyeeedar.MapGeneration.MapGenerator
 import com.lyeeedar.MapGeneration.MapGeneratorNode
 import com.lyeeedar.Util.XmlData
+import java.util.*
 
 class ConditionAction(generator: MapGenerator) : AbstractMapGenerationAction(generator)
 {
@@ -45,7 +46,7 @@ class ConditionAction(generator: MapGenerator) : AbstractMapGenerationAction(gen
 	{
 		for (el in xmlData.children())
 		{
-			val condition = el.get("Condition").toLowerCase().replace("%", "#size").unescapeCharacters()
+			val condition = el.get("Condition").toLowerCase(Locale.ENGLISH).replace("%", "#size").unescapeCharacters()
 			val node = el.get("Node", "")!!
 
 			val compiled = if (condition == "else") null else CompiledExpression(condition, Area.defaultVariables)

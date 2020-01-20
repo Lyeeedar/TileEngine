@@ -7,6 +7,7 @@ import com.lyeeedar.MapGeneration.MapGenerator
 import com.lyeeedar.MapGeneration.Pos
 import com.lyeeedar.Util.XmlData
 import com.lyeeedar.Util.floor
+import java.util.*
 
 class TranslateAction(generator: MapGenerator) : AbstractMapGenerationAction(generator)
 {
@@ -59,9 +60,9 @@ class TranslateAction(generator: MapGenerator) : AbstractMapGenerationAction(gen
 
 	override fun parse(xmlData: XmlData)
 	{
-		xEqn = CompiledExpression(xmlData.get("X", "0")!!.toLowerCase().replace("%", "#size"), Area.defaultVariables)
-		yEqn = CompiledExpression(xmlData.get("Y", "0")!!.toLowerCase().replace("%", "#size"), Area.defaultVariables)
-		mode = Mode.valueOf(xmlData.get("Mode", "Relative")!!.toUpperCase())
+		xEqn = CompiledExpression(xmlData.get("X", "0")!!.toLowerCase(Locale.ENGLISH).replace("%", "#size"), Area.defaultVariables)
+		yEqn = CompiledExpression(xmlData.get("Y", "0")!!.toLowerCase(Locale.ENGLISH).replace("%", "#size"), Area.defaultVariables)
+		mode = Mode.valueOf(xmlData.get("Mode", "Relative")!!.toUpperCase(Locale.ENGLISH))
 	}
 
 	override fun resolve()

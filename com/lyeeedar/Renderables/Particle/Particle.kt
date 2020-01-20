@@ -16,9 +16,11 @@ import com.esotericsoftware.kryo.io.Output
 import com.lyeeedar.BlendMode
 import com.lyeeedar.Direction
 import com.lyeeedar.Util.*
+import com.lyeeedar.Util.Random
 import com.lyeeedar.Util.Statics.Companion.collisionGrid
 import ktx.collections.toGdxArray
 import ktx.math.div
+import java.util.*
 
 /**
  * Created by Philip on 14-Aug-16.
@@ -562,14 +564,14 @@ class Particle(val emitter: Emitter)
 			val particle = Particle(emitter)
 
 			particle.lifetime = Range(xml.get("Lifetime"))
-			particle.blend = BlendMode.valueOf(xml.get("BlendMode", "Additive")!!.toUpperCase())
-			particle.collision = CollisionAction.valueOf(xml.get("Collision", "None")!!.toUpperCase())
+			particle.blend = BlendMode.valueOf(xml.get("BlendMode", "Additive")!!.toUpperCase(Locale.ENGLISH))
+			particle.collision = CollisionAction.valueOf(xml.get("Collision", "None")!!.toUpperCase(Locale.ENGLISH))
 			particle.drag = xml.getFloat("Drag", 0f)
 			particle.velocityAligned = xml.getBoolean("VelocityAligned", false)
 			particle.allowResize = xml.getBoolean("AllowResize", true)
 			particle.maintainAspectRatio = xml.getBoolean("MaintainAspectRatio", false)
-			particle.sizeOrigin = SizeOrigin.valueOf(xml.get("SizeOrigin", "Center")!!.toUpperCase())
-			particle.sizeMode = SizeMode.valueOf(xml.get("SizeMode", "BothAxis")!!.toUpperCase())
+			particle.sizeOrigin = SizeOrigin.valueOf(xml.get("SizeOrigin", "Center")!!.toUpperCase(Locale.ENGLISH))
+			particle.sizeMode = SizeMode.valueOf(xml.get("SizeMode", "BothAxis")!!.toUpperCase(Locale.ENGLISH))
 			particle.brownian = xml.getFloat("Brownian", 0f)
 
 			particle.blendKeyframes = xml.getBoolean("BlendKeyframes", false)

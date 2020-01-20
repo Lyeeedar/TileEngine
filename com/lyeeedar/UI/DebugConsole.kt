@@ -13,6 +13,7 @@ import com.lyeeedar.Util.Statics
 import ktx.actors.setKeyboardFocus
 import ktx.collections.set
 import ktx.collections.toGdxArray
+import java.util.*
 
 
 class DebugConsole(val historyKey: String) : Table()
@@ -117,12 +118,12 @@ class DebugConsole(val historyKey: String) : Table()
 			}
 		}
 		text.setFocusTraversal(false)
-		text.setTextFieldListener({ textField, key ->
+		text.setTextFieldListener { textField, key ->
 			if (key == '\r' || key == '\n')
 			{
 				tabIndex = 0
 
-				val commandName = text.text.split(' ').first().toLowerCase()
+				val commandName = text.text.split(' ').first().toLowerCase(Locale.ENGLISH)
 
 				if (commandName == "?" || commandName == "help")
 				{
@@ -141,7 +142,7 @@ class DebugConsole(val historyKey: String) : Table()
 						if (history.size == 0 || history.last() != text.text)
 						{
 							history.add(text.text)
-							Statics.settings.set("CommandHistory" + historyKey, history)
+							Statics.settings.set("CommandHistory$historyKey", history)
 						}
 					}
 					else
@@ -160,7 +161,7 @@ class DebugConsole(val historyKey: String) : Table()
 			}
 			else if (key == '\t')
 			{
-				val validNames = commands.keys().filter { it.contains(typedText.toLowerCase()) }
+				val validNames = commands.keys().filter { it.contains(typedText.toLowerCase(Locale.ENGLISH)) }
 				if (tabIndex >= validNames.size)
 				{
 					tabIndex = 0
@@ -180,7 +181,7 @@ class DebugConsole(val historyKey: String) : Table()
 				typedText = text.text
 				tabIndex = 0
 			}
-		})
+		}
 		text.textFieldFilter = TextField.TextFieldFilter { textField, c -> c != '`' }
 
 		log.background = TextureRegionDrawable(AssetManager.loadTextureRegion("Sprites/white.png")).tint(Color(0.2f, 0.2f, 0.2f, 0.6f))
@@ -229,7 +230,7 @@ class DebugConsole(val historyKey: String) : Table()
 	{
 		if (Statics.release) return
 
-		val lname = name.toLowerCase()
+		val lname = name.toLowerCase(Locale.ENGLISH)
 
 		commands[lname] = ConsoleCommand(name, help, callback)
 	}
@@ -238,7 +239,7 @@ class DebugConsole(val historyKey: String) : Table()
 	{
 		if (Statics.release) return
 
-		val lname = name.toLowerCase()
+		val lname = name.toLowerCase(Locale.ENGLISH)
 		if (commands.containsKey(lname)) throw Exception("Console command already registered with name '$name'!")
 
 		commands[lname] = ConsoleCommand(name, help, callback)
@@ -248,7 +249,7 @@ class DebugConsole(val historyKey: String) : Table()
 	{
 		if (Statics.release) return
 
-		val lname = name.toLowerCase()
+		val lname = name.toLowerCase(Locale.ENGLISH)
 
 		commands.remove(lname)
 	}
@@ -262,7 +263,7 @@ class ConsoleCommand(val text: String, val help: String, val callback: (args: ko
 
 		val argText = text.subSequence(this.text.length, text.length).toString().trim()
 
-		if (argText.toLowerCase() == "help")
+		if (argText.toLowerCase(Locale.ENGLISH) == "help")
 		{
 			console.write(help)
 			return true
