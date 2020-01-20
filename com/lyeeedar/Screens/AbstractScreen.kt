@@ -125,7 +125,9 @@ abstract class AbstractScreen() : Screen, InputProcessor, GestureDetector.Gestur
 	override fun pause() {}
 
 	// ----------------------------------------------------------------------
-	override fun resume() {}
+	override fun resume() {
+		Statics.analytics.appOpen()
+	}
 
 	// ----------------------------------------------------------------------
 	override fun hide() {}

@@ -35,6 +35,7 @@ class Statics
 		var crashReporter: ICrashReporter = DummyCrashReporter()
 		var logger: ILogger = DummyLogger()
 		var performanceTracer: IPerformanceTracer = DummyPerformanceTracer()
+		var analytics: IAnalytics = DummyAnalytics()
 
 		var resolution = Point(360, 640)
 		var screenSize = Point(resolution.x, resolution.y)

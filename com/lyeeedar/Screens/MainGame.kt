@@ -38,6 +38,8 @@ class MainGame : Game()
 
 	override fun create()
 	{
+		Statics.analytics.appOpen()
+
 		Statics.setup()
 
 		if (Statics.android)
