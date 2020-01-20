@@ -1,5 +1,11 @@
 package com.lyeeedar.Util
 
+interface ITrace
+{
+	fun start()
+	fun stop()
+}
+
 interface ICrashReporter
 {
 	fun setCustomKey(key: String, value: String)
@@ -11,6 +17,21 @@ interface ICrashReporter
 	fun logDebug(message: String)
 	fun logWarning(message: String)
 	fun logError(message: String)
+
+	fun getTrace(name: String): ITrace
+}
+
+class DummyTrace : ITrace
+{
+	override fun start()
+	{
+
+	}
+
+	override fun stop()
+	{
+
+	}
 }
 
 class DummyCrashReporter : ICrashReporter
@@ -53,5 +74,10 @@ class DummyCrashReporter : ICrashReporter
 	override fun logError(message: String)
 	{
 
+	}
+
+	override fun getTrace(name: String): ITrace
+	{
+		return DummyTrace()
 	}
 }
