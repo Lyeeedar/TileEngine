@@ -290,7 +290,8 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 
 		val stage = stage ?: Statics.stage
 
-		val table = Table()
+		val pickButtonTable = Table()
+		val table = RemoveAwareTable {pickButtonTable.remove()}
 		val background = Table()
 
 		val currentScale = contentTable.scaleX
@@ -312,7 +313,6 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 
 		val closeButton = Button(Statics.skin, "closecard")
 		closeButton.setSize(24f, 24f)
-		val pickButtonTable = Table()
 
 		val collapseSequence = lambda {
 			closeButton.remove()
@@ -419,8 +419,12 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 		background.setFillParent(true)
 		background.background = TextureRegionDrawable(AssetManager.loadTextureRegion("white")).tint(Color(0f, 0f, 0f, 0.8f))
 		background.addClickListener {
-			table.addAction(collapseSequence)
-			background.addAction(fadeOut(speed))
+
+			if (fullscreen)
+			{
+				table.addAction(collapseSequence)
+				background.addAction(fadeOut(speed))
+			}
 		}
 		background.alpha = 0f
 		background.addAction(fadeIn(speed))
@@ -825,7 +829,7 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 				for (oldPick in oldPickFuns)
 				{
 					card.addPick(oldPick.string) {
-						card.dissolve(CardWidget.DissolveType.HOLY, dissolveDur, 6f)
+						card.dissolve(DissolveType.HOLY, dissolveDur, 6f)
 
 						card.isPicked = true
 						oldPick.pickFun(card)
@@ -836,7 +840,8 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 							Future.call(
 								{
 									greyoutTable.fadeOutAndRemove(0.6f)
-									onCompleteAction()
+
+									Future.call({onCompleteAction()}, 0.6f)
 								}, dissolveDur)
 
 						}
@@ -973,3 +978,16 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 class FrontTableSimple(val title: String, val type: String, val image: Sprite, var titleIcon: Sprite? = null, var topText: String? = null)
 
 class FrontTableComplex(val title: String, val type: String, val content: Table, var titleIcon: Sprite? = null, val descriptors: Array<Pair<Sprite, String?>> = Array())
+
+class RemoveAwareTable(val removeFun: ()->Unit) : Table()
+{
+	override fun childrenChanged()
+	{
+		super.childrenChanged()
+
+		if (stage == null)
+		{
+			removeFun.invoke()
+		}
+	}
+}
