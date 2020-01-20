@@ -47,6 +47,7 @@ abstract class AbstractScreen() : Screen, InputProcessor, GestureDetector.Gestur
 	override fun show()
 	{
 		Statics.logger.logDebug("Switching to screen $this")
+		Statics.crashReporter.setCustomKey("CurrentScreen", this.javaClass.name)
 
 		if ( !created )
 		{
