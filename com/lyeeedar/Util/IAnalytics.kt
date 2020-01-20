@@ -1,6 +1,6 @@
 package com.lyeeedar.Util
 
-interface IAnalytics
+interface IAnalytics<B: IBundle>
 {
 	fun appOpen()
 	fun levelStart(levelName: Long)
@@ -8,9 +8,19 @@ interface IAnalytics
 	fun selectContent(type: String, id: String)
 	fun tutorialBegin()
 	fun tutorialEnd()
+
+	fun getParamBundle(): B
+	fun customEvent(name: String, paramBundle: B)
 }
 
-class DummyAnalytics :  IAnalytics
+interface IBundle
+{
+	fun setString(key: String, value: String)
+	fun setInt(key: String, value: Int)
+	fun setBool(key: String, value: Boolean)
+}
+
+class DummyAnalytics : IAnalytics<DummyBundle>
 {
 	override fun appOpen()
 	{
@@ -41,4 +51,33 @@ class DummyAnalytics :  IAnalytics
 	{
 
 	}
+
+	override fun getParamBundle(): DummyBundle
+	{
+		return DummyBundle()
+	}
+
+	override fun customEvent(name: String, paramBundle: DummyBundle)
+	{
+
+	}
+}
+
+class DummyBundle : IBundle
+{
+	override fun setString(key: String, value: String)
+	{
+
+	}
+
+	override fun setInt(key: String, value: Int)
+	{
+
+	}
+
+	override fun setBool(key: String, value: Boolean)
+	{
+
+	}
+
 }
