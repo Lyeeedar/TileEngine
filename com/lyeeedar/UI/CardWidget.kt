@@ -291,7 +291,10 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 		val stage = stage ?: Statics.stage
 
 		val pickButtonTable = Table()
-		val table = RemoveAwareTable {pickButtonTable.remove()}
+		val closeButton = Button(Statics.skin, "closecard")
+		closeButton.setSize(24f, 24f)
+
+		val table = RemoveAwareTable { pickButtonTable.remove(); closeButton.remove() }
 		val background = Table()
 
 		val currentScale = contentTable.scaleX
@@ -310,9 +313,6 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 		val speed = 0.1f
 		val destX = (stage.width - referenceWidth) / 2f
 		val destY = (stage.height - referenceHeight) / 2f
-
-		val closeButton = Button(Statics.skin, "closecard")
-		closeButton.setSize(24f, 24f)
 
 		val collapseSequence = lambda {
 			closeButton.remove()

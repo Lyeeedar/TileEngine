@@ -85,32 +85,35 @@ class Sprite(val fileName: String, var animationDelay: Float, var textures: Arra
 
 	override fun doUpdate(delta: Float): Boolean
 	{
-		if (repeatAccumulator > 0)
-		{
-			repeatAccumulator -= delta
-		}
-
 		var looped = false
-		if (repeatAccumulator <= 0)
+		if (textures.size > 1)
 		{
-			if (animationStage == AnimationStage.INVALID) animationStage = AnimationStage.START
-			animationAccumulator += delta
-
-			while (animationAccumulator >= animationDelay)
+			if (repeatAccumulator > 0)
 			{
-				animationAccumulator -= animationDelay
+				repeatAccumulator -= delta
+			}
 
-				if (animation == null && texIndex == textures.size / 2)
-				{
-					animationStage = AnimationStage.MIDDLE
-				}
+			if (repeatAccumulator <= 0)
+			{
+				if (animationStage == AnimationStage.INVALID) animationStage = AnimationStage.START
+				animationAccumulator += delta
 
-				texIndex++
-				if (texIndex >= textures.size)
+				while (animationAccumulator >= animationDelay)
 				{
-					texIndex = 0
-					looped = true
-					repeatAccumulator = repeatDelay
+					animationAccumulator -= animationDelay
+
+					if (animation == null && texIndex == textures.size / 2)
+					{
+						animationStage = AnimationStage.MIDDLE
+					}
+
+					texIndex++
+					if (texIndex >= textures.size)
+					{
+						texIndex = 0
+						looped = true
+						repeatAccumulator = repeatDelay
+					}
 				}
 			}
 		}
