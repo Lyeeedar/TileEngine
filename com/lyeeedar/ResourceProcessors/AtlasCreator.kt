@@ -67,7 +67,7 @@ class AtlasCreator
 			if (cacheHash == thisHash)
 			{
 				System.out.println("Atlas identical, no work to be done.")
-				//doPack = false
+				doPack = false
 			}
 		}
 

@@ -54,6 +54,8 @@ class Statics
 
 		var settings = Settings()
 
+		var language = "EN-GB"
+
 		private fun loadSkin(): Skin
 		{
 			val skin = Skin()
