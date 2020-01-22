@@ -492,10 +492,10 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 
 		fun createFrontTable(desc: FrontTableComplex): Table
 		{
-			return createCardTable(desc.title, desc.type, desc.titleIcon, desc.content, desc.descriptors)
+			return createCardTable(desc.title, desc.type, desc.titleIcon, desc.content, desc.descriptors, desc.colour)
 		}
 
-		fun createCardTable(title: String, type: String, typeIcon: Sprite?, content: Table, descriptors: Array<Pair<Sprite, String?>>? = null): Table
+		fun createCardTable(title: String, type: String, typeIcon: Sprite?, content: Table, descriptors: Array<Pair<Sprite, String?>>? = null, colour: Colour = Colour.WHITE): Table
 		{
 			val table = Table()
 
@@ -518,6 +518,7 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 				for (circleDesc in descriptors)
 				{
 					val circle = SpriteWidget(cardCircle)
+					circle.color = colour.color()
 					val icon = SpriteWidget(circleDesc.first.copy())
 					icon.drawable.drawActualSize = false
 
@@ -575,8 +576,8 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 		fun createCard(title: String, type: String, typeIcon: Sprite, smallContent: Table, detailContent: Table, data: Any? = null, colour: Colour = Colour.WHITE, descriptors: Array<Pair<Sprite, String?>>? = null): CardWidget
 		{
 			return CardWidget(
-					createCardTable(title, type, typeIcon, smallContent, descriptors),
-					createCardTable(title, type, typeIcon, detailContent, descriptors),
+					createCardTable(title, type, typeIcon, smallContent, descriptors, colour),
+					createCardTable(title, type, typeIcon, detailContent, descriptors, colour),
 					typeIcon.textures[0],
 					data,
 					colour)
@@ -598,7 +599,7 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 									type,
 									detailContent,
 									Sprite(typeIcon),
-									descriptors)),
+									descriptors, colour)),
 					typeIcon,
 					data,
 					colour)
@@ -606,6 +607,7 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 
 		fun createCard(desc: FrontTableComplex, data: Any? = null, colour: Colour = Colour.WHITE): CardWidget
 		{
+			desc.colour = colour
 			return CardWidget(createFrontTable(desc), createFrontTable(desc), desc.titleIcon!!.textures[0], data, colour)
 		}
 
@@ -977,7 +979,7 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 
 class FrontTableSimple(val title: String, val type: String, val image: Sprite, var titleIcon: Sprite? = null, var topText: String? = null)
 
-class FrontTableComplex(val title: String, val type: String, val content: Table, var titleIcon: Sprite? = null, val descriptors: Array<Pair<Sprite, String?>> = Array())
+class FrontTableComplex(val title: String, val type: String, val content: Table, var titleIcon: Sprite? = null, val descriptors: Array<Pair<Sprite, String?>> = Array(), var colour: Colour = Colour.WHITE)
 
 class RemoveAwareTable(val removeFun: ()->Unit) : Table()
 {
