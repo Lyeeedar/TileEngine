@@ -81,6 +81,22 @@ class XmlData
 		return childMap[id]
 	}
 
+	fun descendants(): Sequence<XmlData>
+	{
+		val thisEl = this
+		return sequence {
+			yield(thisEl)
+
+			for (child in children)
+			{
+				for (desc in child.descendants())
+				{
+					yield(desc)
+				}
+			}
+		}
+	}
+
 	fun get(name: String): String
 	{
 		return getChildByName(name)?.text ?: throw GdxRuntimeException("Element ${this.name} has no child called $name!")
