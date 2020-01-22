@@ -1,5 +1,7 @@
 package com.lyeeedar.UI
 
+import com.badlogic.gdx.scenes.scene2d.Touchable
+import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Array
 import com.lyeeedar.Util.Statics
 
@@ -11,17 +13,29 @@ class Tutorial(val key: String)
 
 	fun addPopup(text: String, emphasis: Any)
 	{
-		actions.add(TutorialPopup(text, emphasis, {
+		actions.add(TutorialPopup(text, emphasis) {
 			advance()
-		}))
+		})
 	}
 	fun addDelay(duration: Float)
 	{
+		var createdTable: Table? = null
 		var counter = 0f
 		val action = fun (delta:Float): Boolean {
+
+			if (createdTable == null)
+			{
+				createdTable = Table()
+				createdTable!!.touchable = Touchable.enabled
+				createdTable!!.setFillParent(true)
+
+				Statics.stage.addActor(createdTable)
+			}
+
 			counter += delta
 			if (counter >= duration)
 			{
+				createdTable?.remove()
 				return true
 			}
 			return false

@@ -841,9 +841,8 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 						{
 							Future.call(
 								{
-									greyoutTable.fadeOutAndRemove(0.6f)
-
-									Future.call({onCompleteAction()}, 0.6f)
+									greyoutTable.fadeOutAndRemove(0.2f)
+									Future.call({onCompleteAction()}, 0.2f)
 								}, dissolveDur)
 
 						}
