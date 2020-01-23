@@ -474,9 +474,9 @@ class XmlData
 			}
 
 			return sequence {
-				for (path in existingPaths!!)
+				for (i in 0 until existingPaths!!.size)
 				{
-					yield(path)
+					yield(existingPaths!![i])
 				}
 			}
 		}
@@ -495,8 +495,10 @@ class XmlData
 			}
 
 			return sequence {
-				for (path in existingPaths!!)
+				for (i in 0 until existingPaths!!.size)
 				{
+					val path = existingPaths!![i]
+
 					if (path.startsWith(base, true))
 					{
 						val xml = getXml(path)
