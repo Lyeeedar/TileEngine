@@ -27,6 +27,10 @@ class NumberChangeLabel(caption: String, skin: Skin, style: String = "default") 
 		}
 	val changeTokens = Array<Any>()
 
+	var text: String
+		get() = captionLabel.text.toString()
+		set(value) { captionLabel.setText(value) }
+
 	private var currentValue = 0f
 	private var currentMaxChange = 0
 
