@@ -29,7 +29,9 @@ class Localisation
 		fun getText(id: String, file: String): String
 		{
 			val trueId = "${Statics.language}@$file/$id"
-			return localisedIds[trueId.hashCode()]
+			val hash = trueId.hashCode()
+
+			return localisedIds[trueId.hashCode()] ?: throw RuntimeException("Id $trueId does not exist!")
 		}
 	}
 }
