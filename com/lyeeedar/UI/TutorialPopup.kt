@@ -17,6 +17,11 @@ import ktx.actors.then
 
 class TutorialPopup(val text: String, val emphasisSource: Any, val advance: () -> Unit) : Table()
 {
+	init
+	{
+		name = "Tutorial"
+	}
+
 	fun evaluateBounds(): Rectangle
 	{
 		return when (emphasisSource)

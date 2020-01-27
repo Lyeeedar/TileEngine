@@ -27,6 +27,7 @@ class Statics
 		var fps = 60
 		var android = false
 		var release = false
+		var test = false
 		val debug: Boolean
 			get() = !release
 

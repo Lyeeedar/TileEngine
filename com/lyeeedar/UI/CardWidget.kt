@@ -292,6 +292,7 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 
 		val pickButtonTable = Table()
 		val closeButton = Button(Statics.skin, "closecard")
+		closeButton.name = "Close"
 		closeButton.setSize(24f, 24f)
 
 		val table = RemoveAwareTable { pickButtonTable.remove(); closeButton.remove() }
@@ -390,6 +391,7 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 		for (pick in pickFuns)
 		{
 			val pickButton = TextButton(pick.string, Statics.skin, "defaultcard")
+			pickButton.name = pick.string
 			pickButton.addClickListener {
 				pick.pickFun(this)
 				table.addAction(collapseSequence)
@@ -823,8 +825,12 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 			val dissolveDur = 1f
 
 			var gatheredLoot = 0
+			var i = 0
 			for (card in cards)
 			{
+				card.name = "Reward$i"
+				i++
+
 				val oldPickFuns = card.pickFuns.toGdxArray()
 				card.pickFuns.clear()
 

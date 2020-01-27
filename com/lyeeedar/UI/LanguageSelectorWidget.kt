@@ -22,6 +22,7 @@ class LanguageSelectorWidget(skin: Skin) : Table(skin)
 	init
 	{
 		warningLabel.setWrap(true)
+		warningLabel.name = "languageWarning"
 
 		val languagesXml = getXml("Localisation/Languages.xml")
 		for (el in languagesXml.children)
@@ -60,6 +61,7 @@ class LanguageSelectorWidget(skin: Skin) : Table(skin)
 		for (language in languages)
 		{
 			val languageTable = Table()
+			languageTable.name = "Language_${language.code}"
 			languageTable.background = NinePatchDrawable(NinePatch(AssetManager.loadTextureRegion("Sprites/GUI/Button.png"), 6, 6, 6, 6))
 
 			if (language == selectedLanguage)
