@@ -54,7 +54,7 @@ class Statics
 
 		var settings = Settings()
 
-		var language = "EN-GB"
+		var language = "en"
 
 		private fun loadSkin(): Skin
 		{

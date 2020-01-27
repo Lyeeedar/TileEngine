@@ -10,28 +10,34 @@ class Localisation
 		val localisedIds: IntMap<String> by lazy {
 			val map = IntMap<String>()
 
-			for (file in XmlData.enumeratePaths("Localisation", "Localisation"))
+			val languagesXml = getXml("Localisation/Languages.xml")
+			for (el in languagesXml.children)
 			{
-				val fileName = file.filename(false)
-				val language = file.directory().filename(false)
-				val xml = getXml(file)
+				val code = el.get("Code")
 
-				for (el in xml.children)
+				for (file in XmlData.enumeratePaths("Localisation/$code", "Localisation"))
 				{
-					val trueId = "$language@$fileName/${el.getAttribute("ID")}"
-					map[trueId.hashCode()] = el.value.toString()
+					val fileName = file.filename(false)
+					val xml = getXml(file)
+
+					for (el in xml.children)
+					{
+						val trueId = "$code@$fileName/${el.getAttribute("ID")}"
+						map[trueId.hashCode()] = el.value.toString()
+					}
 				}
 			}
 
 			map
 		}
 
-		fun getText(id: String, file: String): String
+		fun getText(id: String, file: String, language: String? = null): String
 		{
-			val trueId = "${Statics.language}@$file/$id"
+			val languageCode = language ?: Statics.language
+			val trueId = "$languageCode@$file/$id"
 			val hash = trueId.hashCode()
 
-			return localisedIds[trueId.hashCode()] ?: throw RuntimeException("Id $trueId does not exist!")
+			return localisedIds[hash] ?: throw RuntimeException("Id $trueId does not exist!")
 		}
 	}
 }
