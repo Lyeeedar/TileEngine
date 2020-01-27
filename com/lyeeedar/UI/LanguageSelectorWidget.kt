@@ -15,7 +15,7 @@ class LanguageSelectorWidget(skin: Skin) : Table(skin)
 {
 	private val tick = AssetManager.loadSprite("Oryx/uf_split/uf_interface/uf_interface_680", colour = Colour(Color.FOREST))
 
-	private val languages = Array<Language>()
+	val languages = Array<Language>()
 	private val warningLabel = Label("", skin)
 	var selectedLanguage: Language
 
