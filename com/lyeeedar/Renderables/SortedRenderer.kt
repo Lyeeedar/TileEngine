@@ -228,11 +228,11 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 	}
 
 	// ----------------------------------------------------------------------
-	fun endStatic(batch: Batch)
+	fun endStatic()
 	{
 		if (!inStaticBegin) throw Exception("EndStatic called before beginstatic!")
 
-		flush(batch)
+		flush()
 
 		inStaticBegin = false
 	}
@@ -674,9 +674,9 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 	}
 
 	// ----------------------------------------------------------------------
-	private fun flush(batch: Batch)
+	private fun flush(batch: Batch? = null)
 	{
-		if (queuedSprites == 0)
+		if (queuedSprites == 0 && staticBuffers.size == 0)
 		{
 			return
 		}
@@ -732,7 +732,7 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 		}
 		else
 		{
-			combinedMatrix.set(batch.projectionMatrix).mul(batch.transformMatrix)
+			combinedMatrix.set(batch!!.projectionMatrix).mul(batch!!.transformMatrix)
 			waitOnRender()
 		}
 
@@ -762,7 +762,7 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 	}
 
 	// ----------------------------------------------------------------------
-	fun queue(renderable: Renderable, ix: Float, iy: Float, layer: Int, index: Int, colour: Colour = Colour.WHITE, width: Float = 1f, height: Float = 1f)
+	fun queue(renderable: Renderable, ix: Float, iy: Float, layer: Int = 0, index: Int = 0, colour: Colour = Colour.WHITE, width: Float = 1f, height: Float = 1f)
 	{
 		if (renderable is Sprite) queueSprite(renderable, ix, iy, layer, index, colour, width, height)
 		else if (renderable is TilingSprite) queueSprite(renderable, ix, iy, layer, index, colour, width, height)
@@ -784,7 +784,7 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 	}
 
 	// ----------------------------------------------------------------------
-	fun queueParticle(effect: ParticleEffect, ix: Float, iy: Float, layer: Int, index: Int, colour: Colour = Colour.WHITE, width: Float = 1f, height: Float = 1f, lit: Boolean = true)
+	fun queueParticle(effect: ParticleEffect, ix: Float, iy: Float, layer: Int = 0, index: Int = 0, colour: Colour = Colour.WHITE, width: Float = 1f, height: Float = 1f, lit: Boolean = true)
 	{
 		if (!inBegin && !inStaticBegin) throw Exception("Queue called before begin!")
 
@@ -985,7 +985,7 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 	}
 
 	// ----------------------------------------------------------------------
-	fun queueSprite(tilingSprite: TilingSprite, ix: Float, iy: Float, layer: Int, index: Int, colour: Colour = Colour.WHITE, width: Float = 1f, height: Float = 1f, lit: Boolean = true)
+	fun queueSprite(tilingSprite: TilingSprite, ix: Float, iy: Float, layer: Int = 0, index: Int = 0, colour: Colour = Colour.WHITE, width: Float = 1f, height: Float = 1f, lit: Boolean = true)
 	{
 		if (!inBegin && !inStaticBegin) throw Exception("Queue called before begin!")
 
@@ -1035,7 +1035,7 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 	}
 
 	// ----------------------------------------------------------------------
-	fun queueSprite(sprite: Sprite, ix: Float, iy: Float, layer: Int, index: Int, colour: Colour = Colour.WHITE, width: Float = 1f, height: Float = 1f, scaleX: Float = 1f, scaleY: Float = 1f, lit: Boolean = true, sortX: Int? = null, sortY: Int? = null)
+	fun queueSprite(sprite: Sprite, ix: Float, iy: Float, layer: Int = 0, index: Int = 0, colour: Colour = Colour.WHITE, width: Float = 1f, height: Float = 1f, scaleX: Float = 1f, scaleY: Float = 1f, lit: Boolean = true, sortX: Int? = null, sortY: Int? = null)
 	{
 		if (!inBegin && !inStaticBegin) throw Exception("Queue called before begin!")
 
@@ -1117,7 +1117,7 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 	}
 
 	// ----------------------------------------------------------------------
-	fun queueTexture(texture: TextureRegion, ix: Float, iy: Float, layer: Int, index: Int, colour: Colour = Colour.WHITE, width: Float = 1f, height: Float = 1f, scaleX: Float = 1f, scaleY: Float = 1f, sortX: Float? = null, sortY: Float? = null, lit: Boolean = true)
+	fun queueTexture(texture: TextureRegion, ix: Float, iy: Float, layer: Int = 0, index: Int = 0, colour: Colour = Colour.WHITE, width: Float = 1f, height: Float = 1f, scaleX: Float = 1f, scaleY: Float = 1f, sortX: Float? = null, sortY: Float? = null, lit: Boolean = true)
 	{
 		if (!inBegin && !inStaticBegin) throw Exception("Queue called before begin!")
 

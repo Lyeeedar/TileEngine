@@ -135,8 +135,8 @@ object ImageUtils
 
 		for (image in images)
 		{
-			val drawWidth = if (image.second) image.first.width else 32
-			val drawHeight = if (image.second) image.first.height else 32
+			val drawWidth = if (image.second) image.first.width else 34
+			val drawHeight = if (image.second) image.first.height else 34
 
 			val startX = (maxWidth / 2) - (drawWidth / 2)
 
