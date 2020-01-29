@@ -2,7 +2,6 @@ package com.lyeeedar.Util
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.NumberUtils
 import com.badlogic.gdx.utils.Pool
 import com.lyeeedar.Renderables.HSLColour
@@ -321,7 +320,11 @@ class Colour()
 		if (scaledCachedR == r && scaledCachedG == g && scaledCachedB == b && scaledCachedA == a) return scaledCachedFB
 		else
 		{
-			val mag = max(r, g, b).clamp(1f, 254f)
+			var max = r
+			if (g > max) max = g
+			if (b > max) max = b
+
+			val mag = max.clamp(1f, 254f)
 
 			val r = (r / mag).clamp(0f, 1f)
 			val g = (g / mag).clamp(0f, 1f)
@@ -351,8 +354,6 @@ class Colour()
 	var scaledCachedB: Float = -1f
 	var scaledCachedA: Float = -1f
 	val scaledCachedFB = Vector2()
-
-	fun vec3(): Vector3 = Vector3(r, g, b)
 
 	fun color() : Color
 	{

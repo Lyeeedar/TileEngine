@@ -129,6 +129,7 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 	private var lightShadowRegions: FloatArray
 	private val combinedMatrix: Matrix4 = Matrix4()
 	private var regionsPerLight = IntArray(shaderShadowLightNum)
+	private val ambientLightVec = Vector3()
 
 	private val executor = LightweightThreadpool(3)
 
@@ -500,10 +501,12 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 		Gdx.gl.glDepthMask(false)
 		shader.begin()
 
+		ambientLightVec.set(ambientLight.r, ambientLight.g, ambientLight.b)
+
 		shader.setUniformMatrix("u_projTrans", combinedMatrix)
 		shader.setUniformf("u_offset", offsetx, offsety)
 		shader.setUniformi("u_texture", 0)
-		shader.setUniformf("u_ambient", ambientLight.vec3())
+		shader.setUniformf("u_ambient", ambientLightVec)
 
 		if (shaderShadowLightNum > 0 || !smoothLighting)
 		{
@@ -2001,6 +2004,7 @@ class RenderSpriteBlock
 		fun obtain(): RenderSpriteBlock
 		{
 			val block = pool.obtain()
+
 			return block
 		}
 

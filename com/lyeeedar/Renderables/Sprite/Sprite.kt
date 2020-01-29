@@ -3,6 +3,7 @@ package com.lyeeedar.Renderables.Sprite
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.MathUtils
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.Array
 import com.lyeeedar.Renderables.Animation.AbstractColourAnimation
@@ -305,16 +306,16 @@ class Sprite(val fileName: String, var animationDelay: Float, var textures: Arra
 		return renderCol
 	}
 
-	private class VertexHash(private var colour: Float, private var x: Float, private var y: Float, private var width: Float, private var height: Float, private var scaleX: Float, private var scaleY: Float, private var rotation: Float, private var texIndex: Int)
+	private class VertexHash(private val colour: Vector2, private var x: Float, private var y: Float, private var width: Float, private var height: Float, private var scaleX: Float, private var scaleY: Float, private var rotation: Float, private var texIndex: Int)
 	{
-		fun isSame(colour: Float, x: Float, y: Float, width: Float, height: Float, scaleX: Float, scaleY: Float, rotation: Float, texIndex: Int): Boolean
+		fun isSame(colour: Vector2, x: Float, y: Float, width: Float, height: Float, scaleX: Float, scaleY: Float, rotation: Float, texIndex: Int): Boolean
 		{
-			return this.colour == colour && this.x == x && this.y == y && this.width == width && this.height == height && this.scaleX == scaleX && this.scaleY == scaleY && this.rotation == rotation && this.texIndex == texIndex
+			return this.colour.x == colour.x && this.colour.y == colour.y && this.x == x && this.y == y && this.width == width && this.height == height && this.scaleX == scaleX && this.scaleY == scaleY && this.rotation == rotation && this.texIndex == texIndex
 		}
 
-		fun update(colour: Float, x: Float, y: Float, width: Float, height: Float, scaleX: Float, scaleY: Float, rotation: Float, texIndex: Int)
+		fun update(colour: Vector2, x: Float, y: Float, width: Float, height: Float, scaleX: Float, scaleY: Float, rotation: Float, texIndex: Int)
 		{
-			this.colour = colour
+			this.colour.set(colour)
 			this.x = x
 			this.y = y
 			this.width = width
@@ -325,26 +326,26 @@ class Sprite(val fileName: String, var animationDelay: Float, var textures: Arra
 			this.texIndex = texIndex
 		}
 	}
-	private val lastRenderHash = VertexHash(-1f, -1f, -1f, -1f, -1f, -1f, -1f, -1f, -1)
-	private val cachedRenderHash = VertexHash(-1f, -1f, -1f, -1f, -1f, -1f, -1f, -1f, -1)
+	private val lastRenderHash = VertexHash(Vector2(-1f, -1f), -1f, -1f, -1f, -1f, -1f, -1f, -1f, -1)
+	private val cachedRenderHash = VertexHash(Vector2(-1f, -1f), -1f, -1f, -1f, -1f, -1f, -1f, -1f, -1)
 	private val vertexCache = FloatArray(SortedRenderer.verticesASprite)
 	fun render(vertices: FloatArray, offset: Int, colour: Colour, x: Float, y: Float, width: Float, height: Float, scaleX: Float, scaleY: Float, rotation: Float, isLit: Boolean)
 	{
 		var cacheVertices = false
 		if (!hasAnim && !frameBlend)
 		{
-			if (cachedRenderHash.isSame(colour.toFloatBits(), x, y, width, height, scaleX, scaleY, rotation, texIndex))
+			if (cachedRenderHash.isSame(colour.toScaledFloatBits(), x, y, width, height, scaleX, scaleY, rotation, texIndex))
 			{
 				System.arraycopy(vertexCache, 0, vertices, offset, SortedRenderer.verticesASprite)
 				return
 			}
-			else if (lastRenderHash.isSame(colour.toFloatBits(), x, y, width, height, scaleX, scaleY, rotation, texIndex))
+			else if (lastRenderHash.isSame(colour.toScaledFloatBits(), x, y, width, height, scaleX, scaleY, rotation, texIndex))
 			{
 				cacheVertices = true
 			}
 			else
 			{
-				lastRenderHash.update(colour.toFloatBits(), x, y, width, height, scaleX, scaleY, rotation, texIndex)
+				lastRenderHash.update(colour.toScaledFloatBits(), x, y, width, height, scaleX, scaleY, rotation, texIndex)
 			}
 		}
 
@@ -422,7 +423,7 @@ class Sprite(val fileName: String, var animationDelay: Float, var textures: Arra
 
 		if (cacheVertices)
 		{
-			cachedRenderHash.update(colour.toFloatBits(), x, y, width, height, scaleX, scaleY, rotation, texIndex)
+			cachedRenderHash.update(colour.toScaledFloatBits(), x, y, width, height, scaleX, scaleY, rotation, texIndex)
 			System.arraycopy(vertices, offset, vertexCache, 0, SortedRenderer.verticesASprite)
 		}
 	}
