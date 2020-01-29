@@ -128,6 +128,7 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 	private var lightShadowColourBrightness: FloatArray
 	private var lightShadowRegions: FloatArray
 	private val combinedMatrix: Matrix4 = Matrix4()
+	private var regionsPerLight = IntArray(shaderShadowLightNum)
 
 	private val executor = LightweightThreadpool(3)
 
@@ -337,13 +338,23 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 			lightShadowColourBrightness = FloatArray(shaderShadowLightNum * 4)
 		}
 
-		val regionsPerLight = IntArray(shaderShadowLightNum)
+		if (regionsPerLight.size != shaderShadowLightNum)
+		{
+			regionsPerLight = IntArray(shaderShadowLightNum)
+		}
+
+		for (regionI in regionsPerLight.indices)
+		{
+			regionsPerLight[regionI] = 0
+		}
+
 		var regionsDifferent = false
 		if (Statics.collisionGrid != null)
 		{
-			var i = 0
-			for (light in sortedShadowLights)
+			for (i in 0 until sortedShadowLights.size)
 			{
+				val light = sortedShadowLights[i]
+
 				val numCount: Int
 				if (shadowMode == ShadowMode.TILE)
 				{
@@ -363,7 +374,7 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 					}
 				}
 
-				regionsPerLight[i++] = numCount
+				regionsPerLight[i] = numCount
 			}
 		}
 
@@ -375,8 +386,10 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 		}
 
 		var i = 0
-		for (light in basicLights)
+		for (lightI in 0 until basicLights.size)
 		{
+			val light = basicLights[lightI]
+
 			lightPosRange[(i*3)+0] = light.pos.x * tileSize + offsetx
 			lightPosRange[(i*3)+1] = light.pos.y * tileSize + offsety
 			lightPosRange[(i*3)+2] = (light.range * tileSize * 0.9f) * (light.range * tileSize * 0.9f)
@@ -400,8 +413,10 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 
 		var shadowCacheOffset = 0
 		i = 0
-		for (light in sortedShadowLights)
+		for (lightI in 0 until sortedShadowLights.size)
 		{
+			val light = sortedShadowLights[lightI]
+
 			lightShadowColourBrightness[(i*4)+0] = light.colour.r
 			lightShadowColourBrightness[(i*4)+1] = light.colour.g
 			lightShadowColourBrightness[(i*4)+2] = light.colour.b
@@ -431,8 +446,10 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 			var miny = 0f
 			var maxx = 0f
 			var maxy = 0f
-			for (region in regionsToSet)
+			for (regionI in 0 until regionsToSet.size)
 			{
+				val region = regionsToSet[regionI]
+
 				minx = region.x * tileSize
 				miny = region.y * tileSize
 				maxx = minx + region.width * tileSize
