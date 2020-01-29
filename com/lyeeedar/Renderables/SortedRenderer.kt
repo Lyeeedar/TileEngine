@@ -33,6 +33,8 @@ import squidpony.squidmath.LightRNG
 // ----------------------------------------------------------------------
 class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, val layers: Int, val alwaysOnscreen: Boolean) : Disposable
 {
+	var renderStatic = true
+
 	private var batchID: Int = random.nextInt()
 
 	private val tempVec = Vector2()
@@ -544,7 +546,7 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 			currentOffset += drawCount
 		}
 
-		if (staticBuffers.size > 0)
+		if (staticBuffers.size > 0 && renderStatic)
 		{
 			staticMesh.bind(shader)
 
