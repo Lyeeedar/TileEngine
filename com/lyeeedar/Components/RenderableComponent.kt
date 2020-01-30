@@ -11,11 +11,10 @@ import com.lyeeedar.Util.XmlData
 import com.lyeeedar.Util.round
 import ktx.collections.set
 
-fun Entity.sprite(): Sprite? = this.renderable().renderable as? Sprite
-fun Entity.renderOffset() = this.renderableOrNull()?.renderable?.animation?.renderOffset(false)
-fun Entity.renderable(): RenderableComponent = renderableOrNull()!!
-
-fun Entity.renderableOrNull(): RenderableComponent? = this.components[ComponentType.Renderable] as RenderableComponent?
+inline fun Entity.sprite(): Sprite? = this.renderable().renderable as? Sprite
+inline fun Entity.renderOffset() = this.renderableOrNull()?.renderable?.animation?.renderOffset(false)
+inline fun Entity.renderable(): RenderableComponent = renderableOrNull()!!
+inline fun Entity.renderableOrNull(): RenderableComponent? = this.components[ComponentType.Renderable] as RenderableComponent?
 class RenderableComponent() : AbstractComponent()
 {
 	override val type: ComponentType = ComponentType.Renderable

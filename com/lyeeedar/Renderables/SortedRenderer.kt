@@ -261,13 +261,25 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 	}
 
 	// ----------------------------------------------------------------------
-	private fun requestRender(blendSrc: Int, blendDst: Int, texture: Texture, drawFun: (vertices: FloatArray, offset: Int) -> Unit)
+	private inline fun requestRender(rs: RenderSprite)
 	{
 		if (currentVertexCount+verticesASprite >= maxVertices)
 		{
 			System.err.println("Too many vertices queued!")
 			return
 		}
+
+		val blendSrc = rs.blend.src
+		val blendDst = rs.blend.dst
+
+		val sprite = rs.sprite
+		var texture = rs.texture?.texture
+
+		if (sprite != null)
+		{
+			texture = sprite.currentTexture.texture
+		}
+		texture!!
 
 		if (currentBuffer == null)
 		{
@@ -291,8 +303,26 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 		buffer.count += verticesASprite
 		currentVertexCount += verticesASprite
 
-		executor.addJob {
-			drawFun.invoke(vertices, offset)
+		val localx = rs.x
+		val localy = rs.y
+		val localw = rs.width * tileSize
+		val localh = rs.height * tileSize
+
+		val colour = rs.colour
+
+		if (sprite != null)
+		{
+			val renderCol = sprite.getRenderColour()
+			if (!renderCol.isWhite()) colour.mul(renderCol)
+
+			sprite.render(vertices, offset, colour, localx, localy, localw, localh, rs.scaleX, rs.scaleY, rs.rotation, rs.isLit)
+		}
+		else if (rs.texture != null)
+		{
+			doDraw(vertices, offset,
+				   rs.texture!!, rs.nextTexture ?: rs.texture!!, colour,
+				   localx, localy, 0.5f, 0.5f, 1f, 1f, localw * rs.scaleX, localh * rs.scaleY, rs.rotation, rs.flipX, rs.flipY,
+				   0f, rs.blendAlpha, rs.alphaRef, rs.isLit, false)
 		}
 	}
 
@@ -631,37 +661,7 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 				}
 			}
 
-			var texture = rs.texture?.texture
-
-			if (sprite != null)
-			{
-				texture = sprite.currentTexture.texture
-			}
-
-			requestRender(rs.blend.src, rs.blend.dst, texture!!) { vertices: FloatArray, offset: Int ->
-				val localx = rs.x
-				val localy = rs.y
-				val localw = rs.width * tileSize
-				val localh = rs.height * tileSize
-
-				val colour = rs.colour
-
-				if (sprite != null)
-				{
-					val renderCol = sprite.getRenderColour()
-					if (!renderCol.isWhite()) colour.mul(renderCol)
-
-					sprite.render(vertices, offset, colour, localx, localy, localw, localh, rs.scaleX, rs.scaleY, rs.rotation, rs.isLit)
-				}
-
-				if (rs.texture != null)
-				{
-					doDraw(vertices, offset,
-						   rs.texture!!, rs.nextTexture ?: rs.texture!!, colour,
-						   localx, localy, 0.5f, 0.5f, 1f, 1f, localw * rs.scaleX, localh * rs.scaleY, rs.rotation, rs.flipX, rs.flipY,
-						   0f, rs.blendAlpha, rs.alphaRef, rs.isLit, false)
-				}
-			}
+			requestRender(rs)
 		}
 	}
 

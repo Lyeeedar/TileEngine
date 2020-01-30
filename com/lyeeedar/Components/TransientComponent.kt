@@ -2,8 +2,8 @@ package com.lyeeedar.Components
 
 import com.lyeeedar.Util.XmlData
 
-fun Entity.isTransient() = this.transient() != null
-fun Entity.transient(): TransientComponent? = this.components[ComponentType.Transient] as TransientComponent?
+inline fun Entity.isTransient() = this.transient() != null
+inline fun Entity.transient(): TransientComponent? = this.components[ComponentType.Transient] as TransientComponent?
 class TransientComponent : AbstractComponent()
 {
 	override val type: ComponentType = ComponentType.Transient

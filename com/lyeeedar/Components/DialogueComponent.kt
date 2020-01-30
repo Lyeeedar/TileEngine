@@ -2,7 +2,7 @@ package com.lyeeedar.Components
 
 import com.lyeeedar.Util.XmlData
 
-fun Entity.dialogue(): DialogueComponent? = this.components[ComponentType.Dialogue] as DialogueComponent?
+inline fun Entity.dialogue(): DialogueComponent? = this.components[ComponentType.Dialogue] as DialogueComponent?
 class DialogueComponent : AbstractComponent()
 {
 	override val type: ComponentType = ComponentType.Dialogue

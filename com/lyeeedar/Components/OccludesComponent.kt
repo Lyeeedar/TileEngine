@@ -2,7 +2,7 @@ package com.lyeeedar.Components
 
 import com.lyeeedar.Util.XmlData
 
-fun Entity.occludes(): OccludesComponent? = this.components[ComponentType.Occludes] as OccludesComponent?
+inline fun Entity.occludes(): OccludesComponent? = this.components[ComponentType.Occludes] as OccludesComponent?
 class OccludesComponent : AbstractComponent()
 {
 	override val type: ComponentType = ComponentType.Occludes

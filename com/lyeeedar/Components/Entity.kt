@@ -6,7 +6,7 @@ import com.lyeeedar.Util.FastEnumMap
 class Entity
 {
 	val signature = EnumBitflag<ComponentType>()
-	val components = FastEnumMap<ComponentType, AbstractComponent>(ComponentType::class.java)
+	@JvmField val components = FastEnumMap<ComponentType, AbstractComponent>(ComponentType::class.java)
 
 	fun addComponent(component: AbstractComponent)
 	{
