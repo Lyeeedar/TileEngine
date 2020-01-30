@@ -44,7 +44,8 @@ class EntityPool
 			entity.components.clear()
 			entity.signature.clear()
 
-			entity.free()
+			entity.obtained = false
+			pool.free(entity)
 		}
 
 		@JvmStatic fun flushFreedEntities()
