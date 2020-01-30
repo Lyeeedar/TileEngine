@@ -52,7 +52,6 @@ class EntityLoader()
 					}
 				}
 
-				component.fromLoad = true
 				component.parse(componentEl, entity, path.directory())
 				entity.add(component)
 			}

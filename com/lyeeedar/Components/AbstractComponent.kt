@@ -1,15 +1,13 @@
 package com.lyeeedar.Components
 
-import com.badlogic.ashley.core.Component
-import com.badlogic.ashley.core.Entity
 import com.esotericsoftware.kryo.Kryo
 import com.esotericsoftware.kryo.io.Input
 import com.esotericsoftware.kryo.io.Output
 import com.lyeeedar.Util.XmlData
 
-abstract class AbstractComponent : Component
+abstract class AbstractComponent
 {
-	var fromLoad = false
+	abstract val type: ComponentType
 
 	abstract fun parse(xml: XmlData, entity: Entity, parentPath: String)
 
@@ -25,5 +23,9 @@ abstract class AbstractComponent : Component
 
 	open fun reset(){}
 
-	abstract fun free()
+	var obtained = false
+	fun free()
+	{
+		ComponentPool.free(this)
+	}
 }

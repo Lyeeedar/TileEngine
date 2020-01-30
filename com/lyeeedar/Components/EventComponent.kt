@@ -15,7 +15,7 @@ fun Entity.event(): EventComponent? {
 
 	return event
 }
-class EventComponent : Component
+class EventComponent : AbstractComponent()
 {
 	val onTurn = Event0Arg()
 

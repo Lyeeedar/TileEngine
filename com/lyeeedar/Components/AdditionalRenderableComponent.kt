@@ -1,17 +1,16 @@
 package com.lyeeedar.Components
 
-import com.badlogic.ashley.core.ComponentMapper
-import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.utils.ObjectMap
-import com.badlogic.gdx.utils.Pool
 import com.lyeeedar.Renderables.Renderable
 import com.lyeeedar.Util.AssetManager
 import com.lyeeedar.Util.XmlData
 import ktx.collections.set
 
-fun Entity.additionalRenderable(): AdditionalRenderableComponent? = AdditionalRenderableComponent.mapper.get(this)
+fun Entity.additionalRenderable(): AdditionalRenderableComponent? = this.components[ComponentType.AdditionalRenderable] as AdditionalRenderableComponent?
 class AdditionalRenderableComponent : AbstractComponent()
 {
+	override val type: ComponentType = ComponentType.AdditionalRenderable
+
 	val below = ObjectMap<String, Renderable>()
 	val above = ObjectMap<String, Renderable>()
 
@@ -56,32 +55,6 @@ class AdditionalRenderableComponent : AbstractComponent()
 		}
 	}
 
-	var obtained: Boolean = false
-	companion object
-	{
-		val mapper: ComponentMapper<AdditionalRenderableComponent> = ComponentMapper.getFor(AdditionalRenderableComponent::class.java)
-		fun get(entity: Entity): AdditionalRenderableComponent? = mapper.get(entity)
-
-		private val pool: Pool<AdditionalRenderableComponent> = object : Pool<AdditionalRenderableComponent>() {
-			override fun newObject(): AdditionalRenderableComponent
-			{
-				return AdditionalRenderableComponent()
-			}
-
-		}
-
-		@JvmStatic fun obtain(): AdditionalRenderableComponent
-		{
-			val obj = AdditionalRenderableComponent.pool.obtain()
-
-			if (obj.obtained) throw RuntimeException()
-			obj.reset()
-
-			obj.obtained = true
-			return obj
-		}
-	}
-	override fun free() { if (obtained) { AdditionalRenderableComponent.pool.free(this); obtained = false } }
 	override fun reset()
 	{
 		below.clear()
