@@ -2,6 +2,12 @@ package com.lyeeedar.Components
 
 import com.lyeeedar.Util.XmlData
 
+fun Entity.markForDeletion(delay: Float, reason: String = "")
+{
+	this.addComponent(ComponentType.MarkedForDeletion)
+	this.markedForDeletion()!!.set(delay, reason)
+}
+
 fun Entity.markedForDeletion(): MarkedForDeletionComponent? = this.components[ComponentType.MarkedForDeletion] as MarkedForDeletionComponent?
 fun Entity.isMarkedForDeletion() = this.markedForDeletion() != null
 class MarkedForDeletionComponent : AbstractComponent()
@@ -16,9 +22,10 @@ class MarkedForDeletionComponent : AbstractComponent()
 
 	}
 
-	fun set(delay: Float): MarkedForDeletionComponent
+	fun set(delay: Float, reason: String = ""): MarkedForDeletionComponent
 	{
 		deletionEffectDelay = delay
+		this.reason = reason
 		return this
 	}
 
