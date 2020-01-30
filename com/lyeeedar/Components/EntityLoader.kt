@@ -1,6 +1,5 @@
 package com.lyeeedar.Components
 
-import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.utils.ObjectMap
 import com.lyeeedar.Renderables.Renderable
 import com.lyeeedar.Util.directory
@@ -19,7 +18,8 @@ class EntityLoader()
 
 			val entity = if (xml.get("Extends", null) != null) load(xml.get("Extends"), skipRenderables) else EntityPool.obtain()
 
-			entity.add(LoadDataComponent.obtain().set(path, xml, true))
+			entity.addComponent(ComponentType.LoadData)
+			entity.loadData()!!.set(path, xml, true)
 
 			val componentsEl = xml.getChildByName("Components") ?: return entity
 
@@ -36,32 +36,16 @@ class EntityLoader()
 					}
 				}
 
-				val component: AbstractComponent = when(componentEl.name.toUpperCase(Locale.ENGLISH))
-				{
-					"ADDITIONALRENDERABLES" -> AdditionalRenderableComponent.obtain()
-					"DIRECTIONALSPRITE" -> DirectionalSpriteComponent.obtain()
-					"METAREGION" -> MetaRegionComponent.obtain()
-					"NAME" -> NameComponent.obtain()
-					"OCCLUDES" -> OccludesComponent.obtain()
-					"POSITION" -> PositionComponent.obtain()
-					"RENDERABLE" -> RenderableComponent.obtain()
-
-					else -> {
-						val comp = loadGameComponents(componentEl.name.toUpperCase(Locale.ENGLISH))
-						comp ?: throw Exception("Unknown component '" + componentEl.name + "'")
-					}
-				}
+				val componentType = ComponentType.Values.first { it.toString().equals(componentEl.name, ignoreCase = true) }
+				val component: AbstractComponent = entity.addComponent(componentType)
 
 				component.parse(componentEl, entity, path.directory())
-				entity.add(component)
 			}
 
-			if (NameComponent.mapper.get(entity) == null)
+			if (!entity.hasComponent(ComponentType.Name))
 			{
-				val name = NameComponent.obtain()
-				name.set(path)
-				name.fromLoad = true
-				entity.add(name)
+				entity.addComponent(ComponentType.Name)
+				entity.name().set(path)
 			}
 
 			return entity
