@@ -27,28 +27,6 @@ class EntityPool
 			return obj
 		}
 
-		@JvmStatic fun obtain(signature: Int): Entity?
-		{
-			val matchingBlock = cache[signature]
-			if (matchingBlock != null && matchingBlock.size > 0)
-			{
-				val entity = matchingBlock.pop()
-
-				for (type in ComponentType.Values)
-				{
-					entity.components[type]?.reset()
-				}
-
-				return entity
-			}
-
-			return null
-		}
-
-		private val cacheLengthFrames = 200
-		private var cacheCounter = 0
-		private val cache = IntMap<Array<Entity>>()
-
 		private val toBeFreed = Array<Entity>(false, 16)
 
 		@JvmStatic fun free(entity: Entity)
@@ -71,19 +49,6 @@ class EntityPool
 
 		@JvmStatic fun flushFreedEntities()
 		{
-			cacheCounter++
-			if (cacheCounter == cacheLengthFrames)
-			{
-				for (block in cache.values())
-				{
-					for (entity in block)
-					{
-						flushFreedEntity(entity)
-					}
-					block.clear()
-				}
-			}
-
 			for (entity in toBeFreed)
 			{
 				for (type in ComponentType.Temporary)
@@ -92,15 +57,10 @@ class EntityPool
 					component?.free()
 				}
 
-				if (entity.components.size > 3)
+				val builder = entity.archetypeBuilder()
+				if (builder != null && builder.builder.requiredComponents.isContainedBy(entity.signature))
 				{
-					var block = cache[entity.signature.bitFlag]
-					if (block == null)
-					{
-						block = Array(false, 16)
-						cache[entity.signature.bitFlag] = block
-					}
-					block.add(entity)
+					builder.builder.free(entity)
 				}
 				else
 				{

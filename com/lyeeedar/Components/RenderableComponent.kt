@@ -1,8 +1,5 @@
 package com.lyeeedar.Components
 
-import com.badlogic.ashley.core.ComponentMapper
-import com.badlogic.ashley.core.Entity
-import com.badlogic.gdx.utils.Pool
 import com.esotericsoftware.kryo.Kryo
 import com.esotericsoftware.kryo.io.Input
 import com.esotericsoftware.kryo.io.Output
@@ -15,12 +12,14 @@ import com.lyeeedar.Util.round
 import ktx.collections.set
 
 fun Entity.sprite(): Sprite? = this.renderable().renderable as? Sprite
-
-fun Entity.renderable(): RenderableComponent = renderableOrNull()!!
-fun Entity.renderableOrNull(): RenderableComponent? = RenderableComponent.mapper.get(this)
 fun Entity.renderOffset() = this.renderableOrNull()?.renderable?.animation?.renderOffset(false)
+fun Entity.renderable(): RenderableComponent = renderableOrNull()!!
+
+fun Entity.renderableOrNull(): RenderableComponent? = this.components[ComponentType.Renderable] as RenderableComponent?
 class RenderableComponent() : AbstractComponent()
 {
+	override val type: ComponentType = ComponentType.Renderable
+
 	lateinit var renderable: Renderable
 	var overrideSprite = false
 	var lockRenderable = false
@@ -109,32 +108,6 @@ class RenderableComponent() : AbstractComponent()
 		}
 	}
 
-	var obtained: Boolean = false
-	companion object
-	{
-		val mapper: ComponentMapper<RenderableComponent> = ComponentMapper.getFor(RenderableComponent::class.java)
-		fun get(entity: Entity): RenderableComponent? = mapper.get(entity)
-
-		private val pool: Pool<RenderableComponent> = object : Pool<RenderableComponent>() {
-			override fun newObject(): RenderableComponent
-			{
-				return RenderableComponent()
-			}
-
-		}
-
-		@JvmStatic fun obtain(): RenderableComponent
-		{
-			val obj = RenderableComponent.pool.obtain()
-
-			if (obj.obtained) throw RuntimeException()
-			obj.reset()
-
-			obj.obtained = true
-			return obj
-		}
-	}
-	override fun free() { if (obtained) { RenderableComponent.pool.free(this); obtained = false } }
 	override fun reset()
 	{
 		overrideSprite = false

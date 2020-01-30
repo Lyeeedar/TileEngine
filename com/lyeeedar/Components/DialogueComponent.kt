@@ -1,13 +1,12 @@
 package com.lyeeedar.Components
 
-import com.badlogic.ashley.core.ComponentMapper
-import com.badlogic.ashley.core.Entity
-import com.badlogic.gdx.utils.Pool
 import com.lyeeedar.Util.XmlData
 
-fun Entity.dialogue(): DialogueComponent? = DialogueComponent.mapper.get(this)
+fun Entity.dialogue(): DialogueComponent? = this.components[ComponentType.Dialogue] as DialogueComponent?
 class DialogueComponent : AbstractComponent()
 {
+	override val type: ComponentType = ComponentType.Dialogue
+
 	var text: String = ""
 	var displayedText: String = ""
 
@@ -26,45 +25,11 @@ class DialogueComponent : AbstractComponent()
 			textFade = 0.5f
 		}
 
-//	val createCallstack: Array<StackTraceElement>
-//
-//	init
-//	{
-//		createCallstack = Thread.currentThread().getStackTrace()
-//		if (Statics.release) throw Exception("Debug code needs to be removed!")
-//	}
-
 	override fun parse(xml: XmlData, entity: Entity, parentPath: String)
 	{
 
 	}
 
-	var obtained: Boolean = false
-	companion object
-	{
-		val mapper: ComponentMapper<DialogueComponent> = ComponentMapper.getFor(DialogueComponent::class.java)
-		fun get(entity: Entity): DialogueComponent? = mapper.get(entity)
-
-		private val pool: Pool<DialogueComponent> = object : Pool<DialogueComponent>() {
-			override fun newObject(): DialogueComponent
-			{
-				return DialogueComponent()
-			}
-
-		}
-
-		@JvmStatic fun obtain(): DialogueComponent
-		{
-			val obj = DialogueComponent.pool.obtain()
-
-			if (obj.obtained) throw RuntimeException()
-			obj.reset()
-
-			obj.obtained = true
-			return obj
-		}
-	}
-	override fun free() { if (obtained) { DialogueComponent.pool.free(this); obtained = false } }
 	override fun reset()
 	{
 		text = ""

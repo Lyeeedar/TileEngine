@@ -1,9 +1,6 @@
 package com.lyeeedar.Components
 
-import com.badlogic.ashley.core.ComponentMapper
-import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.utils.Pool
 import com.lyeeedar.Direction
 import com.lyeeedar.SpaceSlot
 import com.lyeeedar.Util.Point
@@ -11,9 +8,11 @@ import com.lyeeedar.Util.XmlData
 import java.util.*
 
 fun Entity.pos(): PositionComponent = posOrNull()!!
-fun Entity.posOrNull(): PositionComponent? = PositionComponent.mapper.get(this)
+fun Entity.posOrNull(): PositionComponent? = this.components[ComponentType.Position] as PositionComponent?
 class PositionComponent(): AbstractComponent()
 {
+	override val type: ComponentType = ComponentType.Position
+
 	var position: Point = Point(-1, -1) // bottom left pos
 		set(value)
 		{
@@ -96,32 +95,6 @@ class PositionComponent(): AbstractComponent()
 		}
 	}
 
-	var obtained: Boolean = false
-	companion object
-	{
-		private val pool: Pool<PositionComponent> = object : Pool<PositionComponent>() {
-			override fun newObject(): PositionComponent
-			{
-				return PositionComponent()
-			}
-
-		}
-
-		@JvmStatic fun obtain(): PositionComponent
-		{
-			val obj = PositionComponent.pool.obtain()
-
-			if (obj.obtained) throw RuntimeException()
-			obj.reset()
-
-			obj.obtained = true
-			return obj
-		}
-
-		val mapper: ComponentMapper<PositionComponent> = ComponentMapper.getFor(PositionComponent::class.java)
-		fun get(entity: Entity): PositionComponent? = mapper.get(entity)
-	}
-	override fun free() { if (obtained) { PositionComponent.pool.free(this); obtained = false } }
 	override fun reset()
 	{
 		offset.set(0f, 0f)

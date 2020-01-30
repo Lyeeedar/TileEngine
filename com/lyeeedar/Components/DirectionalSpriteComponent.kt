@@ -1,15 +1,14 @@
 package com.lyeeedar.Components
 
-import com.badlogic.ashley.core.ComponentMapper
-import com.badlogic.ashley.core.Entity
-import com.badlogic.gdx.utils.Pool
 import com.lyeeedar.Renderables.Sprite.DirectionalSprite
 import com.lyeeedar.Util.AssetManager
 import com.lyeeedar.Util.XmlData
 
-fun Entity.directionalSprite(): DirectionalSpriteComponent? = DirectionalSpriteComponent.mapper.get(this)
+fun Entity.directionalSprite(): DirectionalSpriteComponent? = this.components[ComponentType.DirectionalSprite] as DirectionalSpriteComponent?
 class DirectionalSpriteComponent() : AbstractComponent()
 {
+	override val type: ComponentType = ComponentType.DirectionalSprite
+
 	lateinit var directionalSprite: DirectionalSprite
 
 	var currentAnim: String = "idle"
@@ -18,35 +17,9 @@ class DirectionalSpriteComponent() : AbstractComponent()
 
 	override fun parse(xml: XmlData, entity: Entity, parentPath: String)
 	{
-		directionalSprite = AssetManager.loadDirectionalSprite(xml, entity.pos()?.size ?: 1)
+		directionalSprite = AssetManager.loadDirectionalSprite(xml, entity.posOrNull()?.size ?: 1)
 	}
 
-	var obtained: Boolean = false
-	companion object
-	{
-		val mapper: ComponentMapper<DirectionalSpriteComponent> = ComponentMapper.getFor(DirectionalSpriteComponent::class.java)
-		fun get(entity: Entity): DirectionalSpriteComponent? = mapper.get(entity)
-
-		private val pool: Pool<DirectionalSpriteComponent> = object : Pool<DirectionalSpriteComponent>() {
-			override fun newObject(): DirectionalSpriteComponent
-			{
-				return DirectionalSpriteComponent()
-			}
-
-		}
-
-		@JvmStatic fun obtain(): DirectionalSpriteComponent
-		{
-			val obj = DirectionalSpriteComponent.pool.obtain()
-
-			if (obj.obtained) throw RuntimeException()
-			obj.reset()
-
-			obj.obtained = true
-			return obj
-		}
-	}
-	override fun free() { if (obtained) { DirectionalSpriteComponent.pool.free(this); obtained = false } }
 	override fun reset()
 	{
 		lastV = DirectionalSprite.VDir.DOWN

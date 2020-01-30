@@ -14,6 +14,14 @@ class Entity
 		signature.setBit(component.type)
 	}
 
+	fun addComponent(componentType: ComponentType): AbstractComponent
+	{
+		val component = ComponentPool.obtain(componentType)
+		addComponent(component)
+
+		return component
+	}
+
 	fun removeComponent(componentType: ComponentType): AbstractComponent?
 	{
 		val component = components[componentType]
