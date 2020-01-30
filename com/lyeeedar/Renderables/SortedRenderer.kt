@@ -131,8 +131,6 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 	private var regionsPerLight = IntArray(shaderShadowLightNum)
 	private val ambientLightVec = Vector3()
 
-	private val executor = LightweightThreadpool(3)
-
 	// ----------------------------------------------------------------------
 	private val bufferPool: Pool<VertexBuffer> = object : Pool<VertexBuffer>() {
 		override fun newObject(): VertexBuffer
@@ -329,8 +327,6 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 	// ----------------------------------------------------------------------
 	private fun storeStatic()
 	{
-		executor.awaitAllJobs()
-
 		queuedBuffers.add(currentBuffer!!)
 		currentBuffer = null
 
@@ -561,8 +557,6 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 			shader.setUniform4fv("u_shadowedLightRegions", lightShadowRegions, 0, lightShadowRegions.size)
 		}
 
-		executor.awaitAllJobs()
-
 		if (currentBuffer != null)
 		{
 			queuedBuffers.add(currentBuffer!!)
@@ -704,46 +698,38 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 		}
 
 		// Begin prerender work
-		executor.addJob {
-			// sort
-			spriteArray.sortWith(compareBy{ it?.comparisonVal ?: 0 }, 0, queuedSprites)
+		// sort
+		spriteArray.sortWith(compareBy{ it?.comparisonVal ?: 0 }, 0, queuedSprites)
 
-			// do screen shake
-			if ( screenShakeRadius > 2 )
+		// do screen shake
+		if ( screenShakeRadius > 2 )
+		{
+			screenShakeAccumulator += delta
+
+			while ( screenShakeAccumulator >= screenShakeSpeed )
 			{
-				screenShakeAccumulator += delta
+				screenShakeAccumulator -= screenShakeSpeed
+				screenShakeAngle += (150 + Random.random() * 60)
 
-				while ( screenShakeAccumulator >= screenShakeSpeed )
+				if (!screenShakeLocked)
 				{
-					screenShakeAccumulator -= screenShakeSpeed
-					screenShakeAngle += (150 + Random.random() * 60)
-
-					if (!screenShakeLocked)
-					{
-						screenShakeRadius *= 0.9f
-					}
+					screenShakeRadius *= 0.9f
 				}
-
-				offsetx += Math.sin( screenShakeAngle.toDouble() ).toFloat() * screenShakeRadius
-				offsety += Math.cos( screenShakeAngle.toDouble() ).toFloat() * screenShakeRadius
 			}
+
+			offsetx += Math.sin( screenShakeAngle.toDouble() ).toFloat() * screenShakeRadius
+			offsety += Math.cos( screenShakeAngle.toDouble() ).toFloat() * screenShakeRadius
 		}
 
 		for (light in basicLights)
 		{
-			executor.addJob {
-				light.update(delta)
-			}
+			light.update(delta)
 		}
 
 		for (light in shadowLights)
 		{
-			executor.addJob {
-				light.update(delta)
-			}
+			light.update(delta)
 		}
-
-		executor.awaitAllJobs()
 
 		// begin rendering
 		queueRenderJobs()
@@ -1952,7 +1938,7 @@ class RenderSprite(val parentBlock: RenderSpriteBlock, val parentBlockIndex: Int
 	// ----------------------------------------------------------------------
 	companion object
 	{
-		private var currentBlock: RenderSpriteBlock = RenderSpriteBlock.obtain()
+		@JvmField var currentBlock: RenderSpriteBlock = RenderSpriteBlock.obtain()
 
 		internal fun obtain(): RenderSprite
 		{
@@ -1971,9 +1957,9 @@ class RenderSprite(val parentBlock: RenderSpriteBlock, val parentBlockIndex: Int
 // ----------------------------------------------------------------------
 class RenderSpriteBlock
 {
-	private var count = 0
-	private var index: Int = 0
-	private val sprites = Array(blockSize) { RenderSprite(this, it) }
+	@JvmField var count = 0
+	@JvmField var index: Int = 0
+	@JvmField val sprites = Array(blockSize) { RenderSprite(this, it) }
 
 	internal inline fun full() = index == blockSize
 
@@ -1999,7 +1985,7 @@ class RenderSpriteBlock
 
 	companion object
 	{
-		public const val blockSize: Int = 128
+		const val blockSize: Int = 128
 
 		fun obtain(): RenderSpriteBlock
 		{

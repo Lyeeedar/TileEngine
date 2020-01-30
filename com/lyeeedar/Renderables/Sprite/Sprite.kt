@@ -428,7 +428,7 @@ class Sprite(val fileName: String, var animationDelay: Float, var textures: Arra
 		}
 	}
 
-	val currentTexture: TextureRegion
+	inline val currentTexture: TextureRegion
 		get() = textures.get(texIndex)
 
 	fun resetAnimation()

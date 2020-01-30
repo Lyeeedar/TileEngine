@@ -105,10 +105,7 @@ class Colour()
 		this.cachedA = other.cachedA
 		this.cachedFB = other.cachedFB
 
-		this.scaledCachedR = other.scaledCachedR
-		this.scaledCachedG = other.scaledCachedG
-		this.scaledCachedB = other.scaledCachedB
-		this.scaledCachedA = other.scaledCachedA
+		this.scaledCacheVal = other.scaledCacheVal
 		this.scaledCachedFB.set(other.scaledCachedFB)
 
 		return this
@@ -317,7 +314,14 @@ class Colour()
 
 	fun toScaledFloatBits() : Vector2
 	{
-		if (scaledCachedR == r && scaledCachedG == g && scaledCachedB == b && scaledCachedA == a) return scaledCachedFB
+		val r = r
+		val g = g
+		val b = b
+		val a = a
+
+		val combinedVal = (r * 255 * 255 * 255) + (b * 255 * 255) + (b * 255) + a
+		val diff = scaledCacheVal - combinedVal
+		if (diff < minFloatVal && diff > -minFloatVal) return scaledCachedFB
 		else
 		{
 			var max = r
@@ -326,34 +330,23 @@ class Colour()
 
 			val mag = max.clamp(1f, 254f)
 
-			val r = (r / mag).clamp(0f, 1f)
-			val g = (g / mag).clamp(0f, 1f)
-			val b = (b / mag).clamp(0f, 1f)
-			val a = a.clamp(0f, 1f)
-
-			if (mag != 1f)
-			{
-
-			}
+			val r = r / mag
+			val g = g / mag
+			val b = b / mag
+			val a = a
 
 			val intBits = (255 * a).toInt() shl 24 or ((255 * b).toInt() shl 16) or ((255 * g).toInt() shl 8) or (255 * r).toInt()
 			val fb = NumberUtils.intToFloatColor(intBits)
 
 			scaledCachedFB.set(fb, mag)
 
-			scaledCachedR = this.r
-			scaledCachedG = this.b
-			scaledCachedB = this.g
-			scaledCachedA = this.a
+			scaledCacheVal = combinedVal
 
 			return scaledCachedFB
 		}
 	}
-	var scaledCachedR: Float = -1f
-	var scaledCachedG: Float = -1f
-	var scaledCachedB: Float = -1f
-	var scaledCachedA: Float = -1f
-	val scaledCachedFB = Vector2()
+	private var scaledCacheVal: Float = -1f
+	private val scaledCachedFB = Vector2()
 
 	fun color() : Color
 	{
@@ -387,6 +380,8 @@ class Colour()
 
 	companion object
 	{
+		private const val minFloatVal = 0.01
+
 		internal val BLACK = Colour(Color.BLACK, true)
 		internal val WHITE = Colour(Color.WHITE, true)
 		internal val LIGHT_GRAY = Colour(Color.LIGHT_GRAY, true)
