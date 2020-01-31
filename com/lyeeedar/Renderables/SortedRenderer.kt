@@ -270,14 +270,38 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 		val blendSrc = rs.blend.src
 		val blendDst = rs.blend.dst
 
-		val sprite = rs.sprite
+		var sprite = rs.sprite
+		if (rs.tilingSprite != null)
+		{
+			bitflag.clear()
+			for (dir in Direction.Values)
+			{
+				val hash = Point.getHashcode(rs.px, rs.py, dir)
+				val keys = tilingMap[hash]
+
+				if (keys?.contains(rs.tilingSprite!!.checkID) != true)
+				{
+					bitflag.setBit(dir)
+				}
+			}
+
+			sprite = rs.tilingSprite!!.getSprite(bitflag)
+			if (sprite.light != null)
+			{
+				addLight(sprite.light!!, rs.px + 0.5f, rs.py + 0.5f)
+			}
+		}
 		var texture = rs.texture?.texture
 
 		if (sprite != null)
 		{
 			texture = sprite.currentTexture.texture
 		}
-		texture!!
+
+		if (texture == null)
+		{
+			throw RuntimeException("Rendersprite had a null texture and a null sprite!")
+		}
 
 		if (currentBuffer == null)
 		{
@@ -633,28 +657,6 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 		{
 			val rs = spriteArray[i]!!
 
-			var sprite = rs.sprite
-			if (rs.tilingSprite != null)
-			{
-				bitflag.clear()
-				for (dir in Direction.Values)
-				{
-					val hash = Point.getHashcode(rs.px, rs.py, dir)
-					val keys = tilingMap[hash]
-
-					if (keys?.contains(rs.tilingSprite!!.checkID) != true)
-					{
-						bitflag.setBit(dir)
-					}
-				}
-
-				sprite = rs.tilingSprite!!.getSprite(bitflag)
-				if (sprite.light != null)
-				{
-					addLight(sprite.light!!, rs.px + 0.5f, rs.py + 0.5f)
-				}
-			}
-
 			requestRender(rs)
 		}
 	}
@@ -784,6 +786,11 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 		if (queuedSprites == spriteArray.size-1)
 		{
 			spriteArray = spriteArray.copyOf(spriteArray.size * 2)
+		}
+
+		if (renderSprite.texture == null && renderSprite.sprite == null && renderSprite.tilingSprite == null)
+		{
+			throw RuntimeException("Queued a sprite with nothing to render!")
 		}
 
 		spriteArray[queuedSprites] = renderSprite
