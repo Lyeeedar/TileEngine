@@ -93,7 +93,7 @@ class RenderableComponent() : AbstractComponent()
 
 		if (overrideSprite)
 		{
-			kryo.writeClassAndObject(output, renderable as Sprite)
+			kryo.writeObject(output, renderable as Sprite)
 		}
 	}
 
@@ -103,7 +103,7 @@ class RenderableComponent() : AbstractComponent()
 
 		if (overrideSprite)
 		{
-			renderable = kryo.readClassAndObject(input) as Sprite
+			renderable = kryo.readObject(input, Sprite::class.java)
 		}
 	}
 

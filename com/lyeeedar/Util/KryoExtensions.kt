@@ -52,7 +52,7 @@ fun Kryo.registerLyeeedarSerialisers()
 	{
 		override fun read(kryo: Kryo, input: Input, type: Class<ParticleEffect>): ParticleEffect
 		{
-			val description = kryo.readClassAndObject(input) as ParticleEffectDescription
+			val description = kryo.readObject(input, ParticleEffectDescription::class.java)
 			val particle = ParticleEffect(description)
 			particle.restore(kryo, input)
 			return particle
@@ -60,7 +60,7 @@ fun Kryo.registerLyeeedarSerialisers()
 
 		override fun write(kryo: Kryo, output: Output, particle: ParticleEffect)
 		{
-			kryo.writeClassAndObject(output, particle.description)
+			kryo.writeObject(output, particle.description)
 			particle.store(kryo, output)
 		}
 	})

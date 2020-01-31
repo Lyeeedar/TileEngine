@@ -36,7 +36,7 @@ fun serialize(obj: Any, path: String)
 		return
 	}
 
-	kryo.writeClassAndObject(output, obj)
+	kryo.writeObject(output, obj)
 
 	output.close()
 }
@@ -54,22 +54,22 @@ fun serialize(obj: Any): ByteArray
 		throw e
 	}
 
-	kryo.writeClassAndObject(output, obj)
+	kryo.writeObject(output, obj)
 
 	output.close()
 
 	return output.buffer
 }
 
-fun deserialize(byteArray: ByteArray): Any
+fun <T> deserialize(byteArray: ByteArray, clazz: Class<T>): T
 {
 	var input: Input? = null
 
-	val data: Any
+	val data: T
 	try
 	{
 		input = Input(byteArray)
-		data = kryo.readClassAndObject(input)
+		data = kryo.readObject(input, clazz)
 	}
 	catch (e: Exception)
 	{
@@ -84,15 +84,15 @@ fun deserialize(byteArray: ByteArray): Any
 	return data
 }
 
-fun deserialize(path: String): Any?
+fun <T> deserialize(path: String, clazz: Class<T>): T?
 {
 	var input: Input? = null
 
-	var data: Any?
+	var data: T?
 	try
 	{
 		input = Input(Gdx.files.local(path).read())
-		data = kryo.readClassAndObject(input)
+		data = kryo.readObject(input, clazz)
 	}
 	catch (e: Exception)
 	{
