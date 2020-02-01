@@ -19,6 +19,7 @@ import com.lyeeedar.Renderables.Particle.Emitter
 import com.lyeeedar.Renderables.Particle.Particle
 import com.lyeeedar.Renderables.Particle.ParticleEffect
 import com.lyeeedar.Renderables.Sprite.Sprite
+import com.lyeeedar.Renderables.Sprite.SpriteWrapper
 import com.lyeeedar.Renderables.Sprite.TilingSprite
 import com.lyeeedar.Util.*
 import ktx.collections.set
@@ -996,6 +997,27 @@ class SortedRenderer(var tileSize: Float, val width: Float, val height: Float, v
 		else
 		{
 			basicLights.add(light)
+		}
+	}
+
+	// ----------------------------------------------------------------------
+	fun queueSpriteWrapper(spriteWrapper: SpriteWrapper, ix: Float, iy: Float, layer: Int = 0, index: Int = 0, colour: Colour = Colour.WHITE, width: Float = 1f, height: Float = 1f, scaleX: Float = 1f, scaleY: Float = 1f, lit: Boolean = true, sortX: Int? = null, sortY: Int? = null)
+	{
+		if (!spriteWrapper.hasChosenSprites)
+		{
+			spriteWrapper.chooseSprites()
+		}
+
+		val sprite = spriteWrapper.chosenSprite
+		if (sprite != null)
+		{
+			queueSprite(sprite, ix, iy, layer, index, colour, width, height, scaleX, scaleY, lit, sortX, sortY)
+		}
+
+		val tilingSprite = spriteWrapper.chosenTilingSprite
+		if (tilingSprite != null)
+		{
+			queueSprite(tilingSprite, ix, iy, layer, index, colour, width, height, lit)
 		}
 	}
 

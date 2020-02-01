@@ -12,10 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Stack
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
-import com.lyeeedar.Util.AssetManager
-import com.lyeeedar.Util.Colour
-import com.lyeeedar.Util.Future
-import com.lyeeedar.Util.Statics
+import com.lyeeedar.Util.*
 import ktx.actors.alpha
 import ktx.actors.then
 import ktx.scene2d.label
@@ -61,10 +58,10 @@ fun showFullscreenText(text: String, minDuration: Float, exitAction: ()->Unit)
 		val outsequence = Actions.fadeOut(0.2f) then Actions.removeActor()
 
 		Future.call({
-			Statics.controls.onInput += fun(key): Boolean {
+			Statics.controls.onInput += fun(key): HandlerAction {
 				fadeTable.addAction(outsequence)
 				exitAction.invoke()
-				return true
+				return HandlerAction.Detach
 			}
 		}, minDuration)
 	}

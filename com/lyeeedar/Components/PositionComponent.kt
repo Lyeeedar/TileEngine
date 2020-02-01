@@ -7,8 +7,7 @@ import com.lyeeedar.Util.Point
 import com.lyeeedar.Util.XmlData
 import java.util.*
 
-inline fun Entity.pos(): PositionComponent = posOrNull()!!
-inline fun Entity.posOrNull(): PositionComponent? = this.components[ComponentType.Position] as PositionComponent?
+inline fun Entity.pos(): PositionComponent? = this.components[ComponentType.Position] as PositionComponent?
 class PositionComponent(): AbstractComponent()
 {
 	override val type: ComponentType = ComponentType.Position
@@ -64,7 +63,7 @@ class PositionComponent(): AbstractComponent()
 		size = xml.getInt("Size", 1)
 		if (size != -1)
 		{
-			val renderable = entity.renderableOrNull()
+			val renderable = entity.renderable()
 			if (renderable != null)
 			{
 				renderable.renderable.size[0] = size

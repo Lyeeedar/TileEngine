@@ -6,16 +6,22 @@ import com.badlogic.gdx.utils.Array
  * Created by Philip on 13-Jul-16.
  */
 
-class Event0Arg {
-	private val handlers = Array<(() -> Boolean)>(false, 4)
+enum class HandlerAction
+{
+	KeepAttached,
+	Detach
+}
 
-	operator fun plusAssign(handler: () -> Boolean)
+class Event0Arg {
+	private val handlers = Array<(() -> HandlerAction)>(false, 4)
+
+	operator fun plusAssign(handler: () -> HandlerAction)
 	{
 		if (invoking) throw Exception("Cannot add handlers during invoke!")
 		handlers.add(handler)
 	}
 
-	operator fun minusAssign(handler: () -> Boolean)
+	operator fun minusAssign(handler: () -> HandlerAction)
 	{
 		if (invoking) throw Exception("Cannot remove handlers during invoke!")
 		handlers.removeValue(handler, true)
@@ -30,7 +36,7 @@ class Event0Arg {
 		while (itr.hasNext())
 		{
 			val handler = itr.next()
-			if (handler.invoke()) itr.remove()
+			if (handler.invoke() == HandlerAction.Detach) itr.remove()
 		}
 
 		invoking = false
@@ -43,15 +49,15 @@ class Event0Arg {
 }
 
 class Event1Arg<T> {
-	private val handlers = Array<((T) -> Boolean)>(false, 4)
+	private val handlers = Array<((T) -> HandlerAction)>(false, 4)
 
-	operator fun plusAssign(handler: (T) -> Boolean)
+	operator fun plusAssign(handler: (T) -> HandlerAction)
 	{
 		if (invoking) throw Exception("Cannot add handlers during invoke!")
 		handlers.add(handler)
 	}
 
-	operator fun minusAssign(handler: (T) -> Boolean)
+	operator fun minusAssign(handler: (T) -> HandlerAction)
 	{
 		if (invoking) throw Exception("Cannot remove handlers during invoke!")
 		handlers.removeValue(handler, true)
@@ -66,7 +72,7 @@ class Event1Arg<T> {
 		while (itr.hasNext())
 		{
 			val handler = itr.next()
-			if (handler.invoke(value)) itr.remove()
+			if (handler.invoke(value) == HandlerAction.Detach) itr.remove()
 		}
 
 		invoking = false
@@ -79,15 +85,15 @@ class Event1Arg<T> {
 }
 
 class Event2Arg<T1, T2> {
-	private val handlers = Array<((T1, T2) -> Boolean)>(false, 4)
+	private val handlers = Array<((T1, T2) -> HandlerAction)>(false, 4)
 
-	operator fun plusAssign(handler: (T1, T2) -> Boolean)
+	operator fun plusAssign(handler: (T1, T2) -> HandlerAction)
 	{
 		if (invoking) throw Exception("Cannot add handlers during invoke!")
 		handlers.add(handler)
 	}
 
-	operator fun minusAssign(handler: (T1, T2) -> Boolean)
+	operator fun minusAssign(handler: (T1, T2) -> HandlerAction)
 	{
 		if (invoking) throw Exception("Cannot remove handlers during invoke!")
 		handlers.removeValue(handler, true)
@@ -102,7 +108,7 @@ class Event2Arg<T1, T2> {
 		while (itr.hasNext())
 		{
 			val handler = itr.next()
-			if (handler.invoke(value1, value2)) itr.remove()
+			if (handler.invoke(value1, value2) == HandlerAction.Detach) itr.remove()
 		}
 
 		invoking = false

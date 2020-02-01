@@ -17,7 +17,7 @@ class DirectionalSpriteComponent() : AbstractComponent()
 
 	override fun parse(xml: XmlData, entity: Entity, parentPath: String)
 	{
-		directionalSprite = AssetManager.loadDirectionalSprite(xml, entity.posOrNull()?.size ?: 1)
+		directionalSprite = AssetManager.loadDirectionalSprite(xml, entity.pos()?.size ?: 1)
 	}
 
 	override fun reset()
