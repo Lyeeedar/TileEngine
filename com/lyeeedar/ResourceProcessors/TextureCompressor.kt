@@ -15,6 +15,8 @@ import java.security.MessageDigest
 
 class TextureCompressor
 {
+	val algorithmVersion = 1
+
 	val doCompression = false
 
 	val processedFiles = ObjectSet<String>()
@@ -34,18 +36,29 @@ class TextureCompressor
 		println("")
 		println("")
 
-		val cacheFilePath = File("../assetsraw/textureCompressionCache")
+		val cacheFilePath = File("../caches/textureCompressionCache")
 		if (cacheFilePath.exists())
 		{
 			val lines = cacheFilePath.readLines()
 			for (line in lines)
 			{
-				val split = line.split(',')
-
-				val ktxPath = "CompressedData/" + split[0].hashCode().toString() + ".png"
-				if (File(ktxPath).exists())
+				if (line.startsWith("algorithm:"))
 				{
-					compiledFileHashes[split[0]] = split[1]
+					val cacheVersion = line.replace("algorithm:", "").toInt()
+					if (cacheVersion != algorithmVersion)
+					{
+						break
+					}
+				}
+				else
+				{
+					val split = line.split(',')
+
+					val ktxPath = "CompressedData/" + split[0].hashCode().toString() + ".png"
+					if (File(ktxPath).exists())
+					{
+						compiledFileHashes[split[0]] = split[1]
+					}
 				}
 			}
 		}
@@ -54,7 +67,7 @@ class TextureCompressor
 		//parseCodeFilesRecursive(File("../../core/src").absoluteFile)
 		processAtlas()
 
-		var output = ""
+		var output = "algorithm:$algorithmVersion\n"
 		for (cached in compiledFileHashes)
 		{
 			output += cached.key + "," + cached.value + "\n"
@@ -64,13 +77,13 @@ class TextureCompressor
 
 	private fun processAtlas()
 	{
-		val atlas = File("../assetsraw/Atlases/SpriteAtlas.atlas")
+		val atlas = File("../caches/Atlases/SpriteAtlas.atlas")
 		val lines = atlas.readLines().toGdxArray()
 		for (i in 0 until lines.size-1)
 		{
 			if (lines[i].endsWith(".png") && lines[i+1].startsWith("size: "))
 			{
-				val outpath = compressTexture("../assetsraw/Atlases/" + lines[i]) ?: error("Failed to compress atlas texture {$lines[i]}")
+				val outpath = compressTexture("../caches/Atlases/" + lines[i])
 				val relPath = outpath.replace("CompressedData/", "")
 				lines[i] = relPath
 			}

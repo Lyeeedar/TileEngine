@@ -25,6 +25,8 @@ import java.util.*
  */
 class AtlasCreator
 {
+	val algorithmVersion = 1
+
 	private val packedPaths = ObjectSet<String>()
 	private val localGeneratedImages = ObjectMap<String, BufferedImage>()
 
@@ -57,9 +59,9 @@ class AtlasCreator
 
 		println(">>>>>> Checking Cache <<<<<<<<")
 		var doPack = true
-		val thisHash = packedPaths.sorted().joinToString().hashCode()
+		val thisHash = ("algorithm:$algorithmVersion" + packedPaths.sorted().joinToString()).hashCode()
 
-		val cacheFile = File("../assetsraw/atlasPackCache")
+		val cacheFile = File("../caches/atlasPackCache")
 		if (cacheFile.exists())
 		{
 			val cacheHash = cacheFile.readText().toInt()
@@ -75,7 +77,7 @@ class AtlasCreator
 		{
 			println(">>>>>> Packing <<<<<<<<")
 
-			val outDir = File("../assetsraw/Atlases")
+			val outDir = File("../caches/Atlases")
 			val contents = outDir.listFiles()
 			if (contents != null)
 				for (file in contents)
