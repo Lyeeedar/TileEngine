@@ -240,8 +240,6 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 
 		if (animating) return
 
-		val stage = stage ?: Statics.stage
-
 		val nextTable = if (faceup) backTable else frontTable
 		val flipFun = fun () {
 			this.flipFun?.invoke()
@@ -267,7 +265,7 @@ class CardWidget(val frontTable: Table, val frontDetailTable: Table, val backIma
 			{
 				flipEffect!!.setSize(width, height)
 				flipEffect!!.setPosition(x, y)
-				stage.addActor(flipEffect)
+				(stage ?: Statics.stage).addActor(flipEffect)
 				toFront()
 			}
 
