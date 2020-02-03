@@ -3,7 +3,6 @@ package com.lyeeedar.Components
 import com.badlogic.gdx.utils.Array
 import com.lyeeedar.Util.EnumBitflag
 import com.lyeeedar.Util.XmlData
-import java.lang.RuntimeException
 
 class EntityArchetypeBuilder
 {
@@ -27,6 +26,11 @@ class EntityArchetypeBuilder
 			entity = entityPool.pop()
 			if (entity.obtained) throw RuntimeException()
 			entity.obtained = true
+
+			for (type in ComponentType.Values)
+			{
+				entity.components[type]?.reset()
+			}
 		}
 		else
 		{
@@ -57,10 +61,6 @@ class EntityArchetypeBuilder
 			if (!requiredComponents.contains(type))
 			{
 				entity.removeComponent(type)?.free()
-			}
-			else
-			{
-				entity.components[type].reset()
 			}
 		}
 
