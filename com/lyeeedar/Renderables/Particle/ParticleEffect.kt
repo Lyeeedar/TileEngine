@@ -453,6 +453,8 @@ class ParticleEffect(val description: ParticleEffectDescription) : Renderable()
 
 	companion object
 	{
+		val DEFAULT = ParticleEffect(ParticleEffectDescription(""))
+
 		val kryo: Kryo by lazy { initKryo() }
 		fun initKryo(): Kryo
 		{

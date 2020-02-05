@@ -212,6 +212,12 @@ class AssetManager
 			return effect
 		}
 
+		fun tryLoadParticleEffect(xml: XmlData?): ParticleEffectDescription?
+		{
+			if (xml == null) return null
+			return loadParticleEffect(xml)
+		}
+
 		fun loadGrayscaleSprite(name: String, colour: Colour = Colour(1f, 1f, 1f, 1f), drawActualSize: Boolean = false): Sprite
 		{
 			return loadSprite(name+"_grayscale", 0.5f, colour, drawActualSize)
