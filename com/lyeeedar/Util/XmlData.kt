@@ -665,6 +665,6 @@ abstract class XmlDataClass
 	abstract fun load(xmlData: XmlData)
 }
 
-annotation class XmlDataFile(val name: String, val colour: String = "", val icon: String = "")
-annotation class NumericRange(val min: Float, val max: Float)
-annotation class XmlDataValue(val name: String)
+annotation class XmlDataFile(val name: String = "", val colour: String = "", val icon: String = "")
+annotation class NumericRange(val min: Float = -9999999f, val max: Float = 9999999f)
+annotation class XmlDataValue(val dataName: String = "", val visibleIf: String = "", val storeInAttribute: Boolean = false)
