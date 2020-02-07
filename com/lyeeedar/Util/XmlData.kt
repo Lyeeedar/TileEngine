@@ -666,6 +666,6 @@ abstract class XmlDataClass
 }
 
 annotation class DataFile(val colour: String = "", val icon: String = "")
-annotation class DataClass(val name: String = "", val category: String = "")
+annotation class DataClass(val name: String = "", val category: String = "", val global: Boolean = false)
 annotation class NumericRange(val min: Float = -9999999f, val max: Float = 9999999f)
 annotation class DataValue(val dataName: String = "", val visibleIf: String = "")
