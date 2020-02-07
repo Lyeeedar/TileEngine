@@ -21,6 +21,7 @@ import com.lyeeedar.Renderables.Particle.TextureOverride
 import com.lyeeedar.Renderables.Renderable
 import com.lyeeedar.Renderables.Sprite.DirectionalSprite
 import com.lyeeedar.Renderables.Sprite.Sprite
+import com.lyeeedar.Renderables.Sprite.SpriteWrapper
 import com.lyeeedar.Renderables.Sprite.TilingSprite
 import java.util.*
 
@@ -216,6 +217,17 @@ class AssetManager
 		{
 			if (xml == null) return null
 			return loadParticleEffect(xml)
+		}
+
+		fun tryLoadSpriteWrapper(xml: XmlData?): SpriteWrapper?
+		{
+			if (xml == null) return null
+			return SpriteWrapper.load(xml)
+		}
+
+		fun loadSpriteWrapper(xml: XmlData): SpriteWrapper
+		{
+			return SpriteWrapper.load(xml)
 		}
 
 		fun loadGrayscaleSprite(name: String, colour: Colour = Colour(1f, 1f, 1f, 1f), drawActualSize: Boolean = false): Sprite
