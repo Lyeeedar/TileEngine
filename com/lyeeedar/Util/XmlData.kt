@@ -670,3 +670,6 @@ annotation class DataClass(val name: String = "", val category: String = "", val
 annotation class NumericRange(val min: Float = -9999999f, val max: Float = 9999999f)
 annotation class DataValue(val dataName: String = "", val visibleIf: String = "")
 annotation class Vector(val name1: String = "", val name2: String = "", val name3: String = "", val name4: String = "")
+annotation class NeedsLocalisation(val file: String = "")
+annotation class DataArray(val minCount: Int = 0, val maxCount: Int = 9999999)
+annotation class FileReference(val basePath: String = "", val stripExtension: Boolean = true, val resourceType: String = "", val allowedFileTypes: String = "")
